@@ -62,7 +62,7 @@ export function FormularioNuevaOrden() {
           }}
         >
           <span className={styles.zonaIcono}>
-            <Upload size={21} aria-hidden="true" />
+            <Upload size={13} aria-hidden="true" />
           </span>
           <p className={styles.zonaTitulo}>Elige el archivo(s) a vender</p>
           <p className={styles.zonaTexto}>
