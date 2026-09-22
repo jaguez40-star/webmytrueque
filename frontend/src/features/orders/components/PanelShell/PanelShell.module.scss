@@ -22,6 +22,11 @@
 
 // Reserva el alto de la barra fija más un respiro, para que ni el contenido ni el footer
 // queden debajo de ella.
+// `--alto-barra-medida` la pone PanelShell en JS con el alto real de la barra de esta
+// pantalla (ResizeObserver). `var(--alto-barra)` es el respaldo del primer paint, antes de
+// la primera medición.
 .conBarra {
-  padding-bottom: calc(var(--alto-barra) + var(--safe-bottom) + 16px);
+  padding-bottom: calc(
+    var(--alto-barra-medida, var(--alto-barra)) + var(--safe-bottom) + 16px
+  );
 }
