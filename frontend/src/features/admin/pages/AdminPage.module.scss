@@ -179,7 +179,15 @@
   color: var(--c-text-muted);
 }
 
-// La señal que justifica este panel: la base dice que hay un archivo y el disco dice que no.
+// Lo normal tras purgar: en gris y sin icono, porque no hay nada que decidir.
+.purgado {
+  @include mono-label(10px, 0.05em);
+  flex: none;
+  color: var(--c-text-muted);
+}
+
+// La señal que justifica este panel: la base dice que hay un archivo y el disco dice que
+// no, SIN que nadie lo haya purgado. Eso sí es una incoherencia que mirar.
 .ausente {
   display: inline-flex;
   align-items: center;

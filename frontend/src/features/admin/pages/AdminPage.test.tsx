@@ -81,6 +81,32 @@ describe('AdminPage', () => {
     expect(screen.getByRole('button', { name: 'Descargar uno.png' })).toBeInTheDocument()
   })
 
+  it('en una orden purgada la ausencia es lo esperado, no una alarma', async () => {
+    // Que no queden bytes tras purgar es correcto. Pintarlo en rojo con los que SÍ son
+    // incoherencias entrena a ignorar la alerta.
+    obtenerAlmacenamiento.mockResolvedValue({
+      ...RESUMEN,
+      ordenes: [
+        {
+          ...RESUMEN.ordenes[0],
+          estado: 'PURGADO',
+          bytesEnDisco: 0,
+          archivos: RESUMEN.ordenes[0].archivos.map((a) => ({ ...a, enDisco: false })),
+        },
+      ],
+    })
+    renderConWrappers(<AdminPage />, { usuario: { ...USUARIO_DE_PRUEBA, esAdmin: true } })
+
+    expect(await screen.findByText('Órdenes (1)')).toBeInTheDocument()
+    expect(screen.getAllByText('purgado')).toHaveLength(2)
+    expect(screen.queryByText(/no está en disco/)).not.toBeInTheDocument()
+    // Y sin botones que no harían nada: ya no queda qué borrar ni qué bajar.
+    expect(screen.queryByRole('button', { name: /Backup ZIP/ })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Borrar toda la orden/ }),
+    ).not.toBeInTheDocument()
+  })
+
   it('ningún borrado ocurre al primer clic', async () => {
     obtenerAlmacenamiento.mockResolvedValue(RESUMEN)
     renderConWrappers(<AdminPage />, { usuario: { ...USUARIO_DE_PRUEBA, esAdmin: true } })

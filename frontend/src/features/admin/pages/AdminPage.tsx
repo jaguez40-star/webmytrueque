@@ -105,6 +105,13 @@ function TarjetaOrdenAdmin({ orden }: { orden: OrdenAdmin }) {
   const borrarArchivo = useBorrarArchivo()
   const [bajando, setBajando] = useState(false)
 
+  // 🔴 En una orden PURGADA que no queden bytes es lo ESPERADO, no una anomalía: alguien
+  // la borró a propósito y la base conserva el rastro. Pintar eso en rojo entrena a
+  // ignorar la alerta, que es justo lo contrario de para lo que existe este panel.
+  const purgada = orden.estado === 'PURGADO'
+  // Ya no hay nada que borrar: el botón solo sobreviviría como ruido.
+  const sePuedeBorrar = !purgada || orden.bytesEnDisco > 0
+
   async function bajarZip() {
     setBajando(true)
     try {
@@ -152,6 +159,8 @@ function TarjetaOrdenAdmin({ orden }: { orden: OrdenAdmin }) {
                   <Trash2 size={14} aria-hidden="true" />
                 </BotonConfirmar>
               </>
+            ) : purgada ? (
+              <span className={styles.purgado}>purgado</span>
             ) : (
               <span className={styles.ausente}>
                 <TriangleAlert size={13} aria-hidden="true" />
@@ -163,28 +172,30 @@ function TarjetaOrdenAdmin({ orden }: { orden: OrdenAdmin }) {
         {orden.archivos.length === 0 && <li className={styles.archivoVacio}>Sin archivos.</li>}
       </ul>
 
-      <footer className={styles.ordenPie}>
-        <button
-          type="button"
-          className={styles.botonZip}
-          disabled={bajando || orden.bytesEnDisco === 0}
-          onClick={() => void bajarZip()}
-        >
-          <FileDown size={15} aria-hidden="true" />
-          {bajando ? 'Preparando…' : 'Backup ZIP'}
-        </button>
-        <BotonConfirmar
-          etiqueta={`Borrar toda la orden ${orden.id}`}
-          texto="Borrar orden"
-          pendiente={borrarOrden.isPending}
-          alConfirmar={() => {
-            borrarOrden.mutate(orden.id)
-          }}
-        >
-          <Trash2 size={15} aria-hidden="true" />
-          Borrar orden
-        </BotonConfirmar>
-      </footer>
+      {sePuedeBorrar && (
+        <footer className={styles.ordenPie}>
+          <button
+            type="button"
+            className={styles.botonZip}
+            disabled={bajando || orden.bytesEnDisco === 0}
+            onClick={() => void bajarZip()}
+          >
+            <FileDown size={15} aria-hidden="true" />
+            {bajando ? 'Preparando…' : 'Backup ZIP'}
+          </button>
+          <BotonConfirmar
+            etiqueta={`Borrar toda la orden ${orden.id}`}
+            texto="Borrar orden"
+            pendiente={borrarOrden.isPending}
+            alConfirmar={() => {
+              borrarOrden.mutate(orden.id)
+            }}
+          >
+            <Trash2 size={15} aria-hidden="true" />
+            Borrar orden
+          </BotonConfirmar>
+        </footer>
+      )}
 
       {(borrarOrden.error ?? borrarArchivo.error) && (
         <p className={styles.error}>
