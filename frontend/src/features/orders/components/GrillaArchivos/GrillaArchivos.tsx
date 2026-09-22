@@ -84,6 +84,7 @@ function TarjetaArchivo({ orden, preposicion, rol }: TarjetaProps) {
     // La acción va FUERA del enlace: un botón dentro de un <a> es HTML inválido y, en la
     // práctica, un clic en el switch acabaría navegando al detalle.
     <li className={styles.celda}>
+      <AccionesOrden orden={orden} rol={rol} />
       <Link to={`/panel/orden/${orden.id}`} className={styles.tile}>
         <div className={styles.tileTop}>
           <span className={styles.extension}>
@@ -96,7 +97,6 @@ function TarjetaArchivo({ orden, preposicion, rol }: TarjetaProps) {
           {formatearPeso(archivo.bytes)} · {preposicion} {orden.contraparte.handle}
         </span>
       </Link>
-      <AccionesOrden orden={orden} rol={rol} />
     </li>
   )
 }
@@ -110,6 +110,7 @@ function TarjetaArchivo({ orden, preposicion, rol }: TarjetaProps) {
 function TarjetaAgrupada({ orden, preposicion, rol }: TarjetaProps) {
   return (
     <li className={styles.filaAncha}>
+      <AccionesOrden orden={orden} rol={rol} />
       <Link to={`/panel/orden/${orden.id}`} className={styles.tileGrupo}>
         <div className={styles.tileTop}>
           <span className={styles.extension}>{orden.archivos.length} ARCHIVOS</span>
@@ -130,7 +131,6 @@ function TarjetaAgrupada({ orden, preposicion, rol }: TarjetaProps) {
           {preposicion} {orden.contraparte.handle}
         </span>
       </Link>
-      <AccionesOrden orden={orden} rol={rol} />
     </li>
   )
 }
