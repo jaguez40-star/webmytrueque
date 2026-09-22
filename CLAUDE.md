@@ -427,6 +427,7 @@ un vistazo.
 
 | Fecha | ID | Cambio | Archivos principales |
 |---|---|---|---|
+| 2026-09-21 | DEPLOY | Primer despliegue a producción: EC2 (Ohio, t3.micro) + Elastic IP + dominio `mytrueque.shop` vía Hostinger + nginx (reverse proxy y SPA) + SSL de Let's Encrypt + backend como servicio systemd. El repo no era git hasta acá — se inicializó y se subió a GitHub. Dos bugs solo visibles en producción: migración `3b60a7877631` sin `batch_alter_table` (fallaba en SQLite real) y la URL del backend hardcodeada a `localhost:8000` en el frontend (rompía login/OAuth para todo usuario real, no solo en desarrollo) | `.gitignore` (raíz), `backend/alembic/versions/3b60a7877631_*.py`, `frontend/src/lib/api/client.ts`, `AuthPanel.tsx`, config de nginx/systemd (solo en el servidor) |
 | 2026-09-22 | DESCARGA | El vendedor autoriza con un switch y el comprador descarga. Columna `downloaded_at` + migración `b2c3d4e5f6a7`. Revocar solo es posible hasta la primera descarga | `orders/{models,schemas,service,api}.py`, `AccionesOrden/`, `useAutorizarDescarga.ts` |
 | 2026-09-22 | PURGA | El vendedor borra los archivos de su orden. `DELETE /orders/{id}`. El comprador recibe 404: lo que tiene en custodia no es suyo | `orders/{service,api}.py`, `usePurgarOrden.ts` |
 | 2026-09-22 | OAUTH | El cliente de Google pasa de *Testing* a **Producción**: ya entra cualquier correo. Hicieron falta las páginas de privacidad y términos | `features/legal/`, Google Cloud Console |
