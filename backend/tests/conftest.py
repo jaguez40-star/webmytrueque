@@ -10,6 +10,7 @@ from sqlalchemy.pool import StaticPool
 
 from src.core.db import Base, get_db
 from src.features.auth.models import User  # noqa: F401
+from src.features.orders.models import Order, OrderFile  # noqa: F401
 from src.main import app
 
 

@@ -14,7 +14,14 @@ import { BarraAccion } from '../components/BarraAccion'
 import { StateChip } from '../components/StateChip'
 import { HashField } from '../components/HashField'
 import { useOrder } from '../hooks/useOrders'
-import { ORDER_STATES, ETIQUETA_ESTADO, esMiTurno, type Order, type OrderState } from '../types'
+import {
+  ORDER_STATES,
+  ETIQUETA_ESTADO,
+  esMiTurno,
+  resumenDeArchivos,
+  type Order,
+  type OrderState,
+} from '../types'
 import {
   fechaLegible,
   formatearMonto,
@@ -70,6 +77,10 @@ export function DetalleOrdenPage() {
   const IconoRol = esVendedor ? ArrowUp : ArrowDown
   const indiceActual = ORDER_STATES.indexOf(orden.estado)
   const falta = orden.liberaAutomaticaEn ? tiempoRestante(orden.liberaAutomaticaEn) : null
+  // La orden puede traer varios archivos. La ficha técnica describe el primero; debajo se
+  // listan todos, que es lo que el comprador necesita ver antes de pagar.
+  const primerArchivo = orden.archivos[0]
+  if (!primerArchivo) return <Navigate to="/panel" replace />
 
   return (
     <PanelShell
@@ -157,9 +168,9 @@ export function DetalleOrdenPage() {
             <FileText size={19} aria-hidden="true" />
           </span>
           <div className={styles.archivoDatos}>
-            <span className={styles.archivoNombre}>{orden.archivo.nombre}</span>
+            <span className={styles.archivoNombre}>{primerArchivo.nombre}</span>
             <span className={styles.archivoFecha}>
-              Subido el {fechaLegible(orden.archivo.subidoEn)}
+              Subido el {fechaLegible(primerArchivo.subidoEn)}
             </span>
           </div>
         </div>
@@ -167,26 +178,37 @@ export function DetalleOrdenPage() {
         <dl className={styles.metadatos}>
           <div>
             <dt>EXTENSIÓN</dt>
-            <dd>{orden.archivo.extension}</dd>
+            <dd>{primerArchivo.extension}</dd>
           </div>
           <div>
             <dt>PESO</dt>
-            <dd>{formatearPeso(orden.archivo.bytes)}</dd>
+            <dd>{formatearPeso(resumenDeArchivos(orden).bytes)}</dd>
           </div>
           <div>
             <dt>ARCHIVOS</dt>
-            <dd>{orden.archivo.archivosDentro ?? '—'}</dd>
+            <dd>{orden.archivos.length}</dd>
           </div>
         </dl>
 
         <HashField
-          hash={orden.archivo.hash}
+          hash={primerArchivo.hash}
           nota={
             esVendedor
               ? `${orden.contraparte.nombre} compara este hash al descargar. Si no coincide, no es el mismo archivo.`
               : 'Compara este hash con el del archivo descargado. Si no coincide, no es el mismo archivo.'
           }
         />
+
+        {orden.archivos.length > 1 && (
+          <ul className={styles.listaArchivos}>
+            {orden.archivos.map((archivo) => (
+              <li key={archivo.hash} className={styles.listaArchivosItem}>
+                <span>{archivo.nombre}</span>
+                <span>{formatearPeso(archivo.bytes)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       {orden.comprobante && (

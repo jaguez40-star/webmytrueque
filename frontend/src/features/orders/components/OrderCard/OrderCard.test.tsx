@@ -10,13 +10,13 @@ function ordenBase(cambios: Partial<Order> = {}): Order {
     estado: 'PAGO_ENVIADO',
     rol: 'vendedor',
     contraparte: { nombre: 'Ana R.', handle: '@trq-4f7k', operaciones: 17 },
-    archivo: {
+    archivos: [{
       nombre: 'archivo-de-prueba.zip',
       extension: '.zip',
       bytes: 252_125_184,
       hash: 'a3f97c2e14b8d0516ff3a9c47e2b8d1069c5a4f3e78b2d91c0a6f5e4b3d2c21b',
       subidoEn: new Date().toISOString(),
-    },
+    }],
     montoCop: 450_000,
     creadaEn: new Date().toISOString(),
     liberaAutomaticaEn: null,

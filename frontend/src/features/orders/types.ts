@@ -49,7 +49,12 @@ export interface Order {
   estado: OrderState
   rol: OrderRole
   contraparte: OrderCounterparty
-  archivo: OrderFile
+  /**
+   * Una orden puede llevar VARIOS archivos: el formulario permite elegir más de uno.
+   * Las vistas compactas (tarjeta, grilla) no los listan todos — usan
+   * `resumenDeArchivos()`, que devuelve un OrderFile sintético que los representa.
+   */
+  archivos: OrderFile[]
   /** Monto en pesos, sin decimales. */
   montoCop: number
   creadaEn: string
@@ -98,4 +103,26 @@ export const ETIQUETA_ESTADO: Record<OrderState, string> = {
   LIBERADO: 'LIBERADO',
   DESCARGADO: 'DESCARGADO',
   PURGADO: 'PURGADO',
+}
+
+/**
+ * Un OrderFile que representa al conjunto, para las vistas donde no cabe una lista.
+ *
+ * Con un solo archivo devuelve ese mismo. Con varios, inventa un nombre ("3 archivos"),
+ * suma los pesos y deja el hash vacío: el hash de un conjunto no significa nada, y
+ * mostrar el del primero sería mentir sobre lo que el comprador va a verificar.
+ */
+export function resumenDeArchivos(orden: Order): OrderFile {
+  const archivos = orden.archivos
+  if (archivos.length === 1) return archivos[0]
+
+  const primero = archivos[0]
+  return {
+    nombre: `${archivos.length} archivos`,
+    extension: primero?.extension ?? '',
+    bytes: archivos.reduce((total, archivo) => total + archivo.bytes, 0),
+    hash: '',
+    subidoEn: primero?.subidoEn ?? new Date().toISOString(),
+    archivosDentro: archivos.length,
+  }
 }

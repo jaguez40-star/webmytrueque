@@ -26,8 +26,12 @@ describe('ModalNuevaOrden', () => {
 
   it('los inputs van a 16px, para que iOS no haga zoom al enfocarlos', () => {
     renderConWrappers(<ModalNuevaOrden />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel/nueva' })
-    // La clase compartida es la que fija el tamaño; basta comprobar que la llevan.
     expect(screen.getByLabelText('@usuario del comprador').className).toContain('campo')
     expect(screen.getByLabelText('Monto en COP').className).toContain('campo')
+  })
+
+  it('el botón de envío arranca deshabilitado: sin archivos no hay orden', () => {
+    renderConWrappers(<ModalNuevaOrden />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel/nueva' })
+    expect(screen.getByRole('button', { name: /Poner en custodia/ })).toBeDisabled()
   })
 })

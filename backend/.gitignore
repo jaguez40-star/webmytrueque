@@ -4,6 +4,9 @@ __pycache__/
 .env
 data/*.db
 data/*.db-journal
+# Archivos en custodia de los usuarios. NUNCA se versionan: son datos privados de
+# terceros y pesan hasta 1 GB por orden.
+data/custodia/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/

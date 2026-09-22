@@ -1,71 +1,34 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Banknote, Check, FileText, Info, Upload, X } from 'lucide-react'
 import { formatearPeso } from '../../utils/format'
+import { LIMITE_BYTES, useNuevaOrden } from '../../context/contextoNuevaOrden'
 import styles from './FormularioNuevaOrden.module.scss'
-
-/**
- * Tope de la custodia: 1 GB contando TODOS los archivos, no cada uno por separado.
- *
- * 🔴 El número lo fija el servidor, no el diseño: el EC2 tiene 6,7 GB de disco con ~3 GB
- * libres. Un tope mayor aceptaría órdenes que la máquina no puede almacenar. Si el disco
- * crece, este es el único sitio que hay que tocar — el copy se genera a partir de aquí.
- */
-const LIMITE_BYTES = 1024 ** 3
-
-/** Dos archivos son el mismo si coinciden nombre y tamaño. Evita duplicar al re-elegir. */
-function mismoArchivo(a: File, b: File): boolean {
-  return a.name === b.name && a.size === b.size
-}
-
-function sumarBytes(archivos: File[]): number {
-  return archivos.reduce((total, archivo) => total + archivo.size, 0)
-}
 
 /**
  * Los tres pasos de crear una orden, sin armazón alrededor.
  *
  * Vive aparte de la página porque el mismo marcado se usa en dos sitios: a pantalla
- * completa en teléfono y dentro de un modal en escritorio. Duplicarlo sería garantizar que
- * los dos se desincronicen a la primera corrección de copy.
+ * completa en teléfono y dentro de un modal en escritorio.
  *
- * ⚠️ MAQUETA PARCIAL: la selección de archivos es real (se eligen, se miden y se pueden
- * quitar), pero no hay endpoint al que subirlos todavía. El resto de los campos siguen
- * siendo de ejemplo, y el botón de envío vive fuera y tampoco envía nada.
+ * El estado NO vive aquí, vive en ContextoNuevaOrden: el botón de envío está fuera de este
+ * componente (en el pie del modal y en la barra fija de la página) y necesita leerlo.
  */
 export function FormularioNuevaOrden() {
   const entradaRef = useRef<HTMLInputElement>(null)
-  const [archivos, setArchivos] = useState<File[]>([])
-  const [error, setError] = useState<string | null>(null)
-  const [arrastrando, setArrastrando] = useState(false)
+  const {
+    archivos,
+    comprador,
+    monto,
+    error,
+    enviando,
+    progreso,
+    agregarArchivos,
+    quitarArchivo,
+    setComprador,
+    setMonto,
+  } = useNuevaOrden()
 
-  const total = sumarBytes(archivos)
-
-  function agregar(nuevos: File[]) {
-    if (nuevos.length === 0) return
-
-    // Se ignoran los que ya estaban en vez de rechazar la tanda entera: volver a elegir un
-    // archivo ya puesto es lo normal cuando se añaden de dos en dos.
-    const sinRepetir = nuevos.filter(
-      (nuevo) => !archivos.some((previo) => mismoArchivo(previo, nuevo)),
-    )
-    if (sinRepetir.length === 0) return
-
-    const combinados = [...archivos, ...sinRepetir]
-    if (sumarBytes(combinados) > LIMITE_BYTES) {
-      setError(
-        `No caben: serían ${formatearPeso(sumarBytes(combinados))} y el máximo es ${formatearPeso(LIMITE_BYTES)}.`,
-      )
-      return
-    }
-
-    setError(null)
-    setArchivos(combinados)
-  }
-
-  function quitar(indice: number) {
-    setError(null)
-    setArchivos((previos) => previos.filter((_, i) => i !== indice))
-  }
+  const total = archivos.reduce((suma, archivo) => suma + archivo.size, 0)
 
   return (
     <>
@@ -84,23 +47,18 @@ export function FormularioNuevaOrden() {
           multiple
           className={styles.entradaOculta}
           onChange={(evento) => {
-            agregar(Array.from(evento.target.files ?? []))
+            agregarArchivos(Array.from(evento.target.files ?? []))
             // Se limpia para que volver a elegir el MISMO archivo dispare `change` otra vez.
             evento.target.value = ''
           }}
         />
 
         <div
-          className={`${styles.zonaSubida} ${arrastrando ? styles.zonaActiva : ''}`}
-          onDragOver={(evento) => {
-            evento.preventDefault()
-            setArrastrando(true)
-          }}
-          onDragLeave={() => setArrastrando(false)}
+          className={styles.zonaSubida}
+          onDragOver={(evento) => evento.preventDefault()}
           onDrop={(evento) => {
             evento.preventDefault()
-            setArrastrando(false)
-            agregar(Array.from(evento.dataTransfer.files))
+            agregarArchivos(Array.from(evento.dataTransfer.files))
           }}
         >
           <span className={styles.zonaIcono}>
@@ -116,6 +74,7 @@ export function FormularioNuevaOrden() {
             type="button"
             className={styles.zonaBoton}
             onClick={() => entradaRef.current?.click()}
+            disabled={enviando}
           >
             {archivos.length === 0 ? 'Buscar archivo' : 'Añadir más'}
           </button>
@@ -125,6 +84,15 @@ export function FormularioNuevaOrden() {
           <p className={styles.errorSubida} role="alert">
             {error}
           </p>
+        )}
+
+        {enviando && (
+          <div className={styles.progreso}>
+            <div className={styles.progresoBarra}>
+              <div className={styles.progresoRelleno} style={{ width: `${progreso}%` }} />
+            </div>
+            <span className={styles.progresoTexto}>Subiendo… {progreso}%</span>
+          </div>
         )}
 
         {archivos.length > 0 && (
@@ -137,8 +105,9 @@ export function FormularioNuevaOrden() {
                 <button
                   type="button"
                   className={styles.itemQuitar}
-                  onClick={() => quitar(indice)}
+                  onClick={() => quitarArchivo(indice)}
                   aria-label={`Quitar ${archivo.name}`}
+                  disabled={enviando}
                 >
                   <X size={16} aria-hidden="true" />
                 </button>
@@ -172,14 +141,16 @@ export function FormularioNuevaOrden() {
           type="text"
           className={`${styles.campo} ${styles.campoMono}`}
           placeholder="@trq-0000"
-          defaultValue="@trq-4f7k"
+          value={comprador}
+          onChange={(evento) => setComprador(evento.target.value)}
+          disabled={enviando}
           autoComplete="off"
           autoCapitalize="none"
           spellCheck={false}
         />
         <p className={styles.confirmacion}>
           <Check size={15} aria-hidden="true" />
-          Ana R. — 17 operaciones completadas
+          Te lo pasa el comprador desde su panel.
         </p>
       </section>
 
@@ -200,13 +171,15 @@ export function FormularioNuevaOrden() {
           inputMode="numeric"
           className={`${styles.campo} ${styles.campoMonto}`}
           placeholder="0"
-          defaultValue="450.000"
+          value={monto}
+          onChange={(evento) => setMonto(evento.target.value)}
+          disabled={enviando}
         />
 
         <p className={styles.avisoDinero}>
           <Banknote size={17} aria-hidden="true" />
           <span>
-            Te transfiere <strong>directo a esa cuenta</strong>. MyTrueque no cobra, no
+            Te transfiere <strong>directo a tu cuenta</strong>. MyTrueque no cobra, no
             retiene y no puede devolver ese dinero.
           </span>
         </p>

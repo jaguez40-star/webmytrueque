@@ -113,6 +113,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Listar */
+        get: operations["listar_orders_get"];
+        put?: never;
+        /** Crear */
+        post: operations["crear_orders_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -134,6 +152,24 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Body_crear_orders_post */
+        Body_crear_orders_post: {
+            /** Comprador */
+            comprador: string;
+            /** Monto */
+            monto: string;
+            /** Archivos */
+            archivos: string[];
+        };
+        /** CounterpartyOut */
+        CounterpartyOut: {
+            /** Nombre */
+            nombre: string;
+            /** Handle */
+            handle: string;
+            /** Operaciones */
+            operaciones: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -148,6 +184,41 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** OrderFileOut */
+        OrderFileOut: {
+            /** Nombre */
+            nombre: string;
+            /** Extension */
+            extension: string;
+            /** Bytes */
+            bytes: number;
+            /** Hash */
+            hash: string;
+            /** Subidoen */
+            subidoEn: string | null;
+        };
+        /** OrderOut */
+        OrderOut: {
+            /** Id */
+            id: string;
+            /** Estado */
+            estado: string;
+            /** Rol */
+            rol: string;
+            contraparte: components["schemas"]["CounterpartyOut"];
+            /** Archivos */
+            archivos: components["schemas"]["OrderFileOut"][];
+            /** Montocop */
+            montoCop: number;
+            /** Creadaen */
+            creadaEn: string | null;
+            /** Liberaautomaticaen */
+            liberaAutomaticaEn: string | null;
+            /** Purgaen */
+            purgaEn: string | null;
+            /** Comprobante */
+            comprobante?: null;
         };
         /** RegisterIn */
         RegisterIn: {
@@ -343,6 +414,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listar_orders_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    crear_orders_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_crear_orders_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
                 };
             };
             /** @description Validation Error */

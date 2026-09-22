@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FileUp } from 'lucide-react'
 import { StateChip } from '../StateChip'
-import { estaCerrada, type Order } from '../../types'
+import { estaCerrada, resumenDeArchivos, type Order } from '../../types'
 import { formatearPeso } from '../../utils/format'
 import styles from './GrillaArchivos.module.scss'
 
@@ -48,13 +48,14 @@ export function GrillaArchivos({ ordenes }: GrillaArchivosProps) {
               <Link to={`/panel/orden/${orden.id}`} className={styles.tile}>
                 <div className={styles.tileTop}>
                   <span className={styles.extension}>
-                    {orden.archivo.extension.replace('.', '').toUpperCase()}
+                    {resumenDeArchivos(orden).extension.replace('.', '').toUpperCase()}
                   </span>
                   <StateChip estado={orden.estado} />
                 </div>
-                <span className={styles.nombre}>{orden.archivo.nombre}</span>
+                <span className={styles.nombre}>{resumenDeArchivos(orden).nombre}</span>
                 <span className={styles.meta}>
-                  {formatearPeso(orden.archivo.bytes)} · para {orden.contraparte.handle}
+                  {formatearPeso(resumenDeArchivos(orden).bytes)} · para{' '}
+                  {orden.contraparte.handle}
                 </span>
               </Link>
             </li>

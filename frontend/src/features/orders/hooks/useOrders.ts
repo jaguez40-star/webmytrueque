@@ -1,14 +1,18 @@
 /**
  * Punto único desde el que las pantallas obtienen órdenes.
  *
- * Hoy devuelve datos de ejemplo. Cuando exista el backend se reemplaza el cuerpo por un
- * `useQuery` contra `GET /orders` y **ningún componente cambia**: esa es toda la razón de
- * que este hook exista en vez de importar los fixtures desde las pantallas.
+ * El modo demo (`?demo=1`) se conserva: sirve para revisar las pantallas sin crear órdenes
+ * reales. Cuando está activo NO se llama al backend.
  */
+import { useQuery } from '@tanstack/react-query'
 import { ORDENES_DE_EJEMPLO } from '../data/ordersFixtures'
+import { obtenerOrdenes } from '../services/ordersService'
 import type { Order } from '../types'
 
 const CLAVE_DEMO = 'trueque_demo_ordenes'
+
+/** Clave de caché de TanStack Query. Se exporta para poder invalidarla al crear una orden. */
+export const CLAVE_ORDENES = ['orders'] as const
 
 /**
  * Lee "?demo=1" UNA sola vez, al cargar el módulo, y lo recuerda en sessionStorage para
@@ -40,12 +44,16 @@ export interface UseOrdersResult {
 }
 
 export function useOrders(): UseOrdersResult {
-  // Sin backend todavía: nunca hay carga real. `isLoading` ya está en la firma para que
-  // las pantallas manejen ese estado desde hoy y no haya que retocarlas después.
-  return {
-    orders: MODO_DEMO ? ORDENES_DE_EJEMPLO : [],
-    isLoading: false,
-  }
+  const consulta = useQuery({
+    queryKey: CLAVE_ORDENES,
+    queryFn: obtenerOrdenes,
+    // `enabled: false` en modo demo: la consulta no se dispara y devuelve los fixtures.
+    enabled: !MODO_DEMO,
+    staleTime: 30_000,
+  })
+
+  if (MODO_DEMO) return { orders: ORDENES_DE_EJEMPLO, isLoading: false }
+  return { orders: consulta.data ?? [], isLoading: consulta.isLoading }
 }
 
 /** Busca una orden por id. Devuelve undefined si no existe. */

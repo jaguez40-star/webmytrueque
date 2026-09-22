@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormularioNuevaOrden } from './FormularioNuevaOrden'
+import { ProveedorNuevaOrden } from '../../context/ProveedorNuevaOrden'
 
 /**
  * Un File del tamaño que se pida sin reservar esa memoria: `File` toma el tamaño de su
@@ -16,6 +17,14 @@ function archivoDe(nombre: string, bytes: number): File {
 
 const GB = 1024 ** 3
 
+function montar() {
+  render(
+    <ProveedorNuevaOrden>
+      <FormularioNuevaOrden />
+    </ProveedorNuevaOrden>,
+  )
+}
+
 function entradaDeArchivos(): HTMLInputElement {
   const entrada = document.querySelector('input[type="file"]')
   if (!entrada) throw new Error('no hay input de archivos')
@@ -24,14 +33,14 @@ function entradaDeArchivos(): HTMLInputElement {
 
 describe('FormularioNuevaOrden — selección de archivos', () => {
   it('parte sin archivos y anuncia el tope', () => {
-    render(<FormularioNuevaOrden />)
+    montar()
     expect(screen.getByText(/Hasta 1 GB en total/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Buscar archivo' })).toBeInTheDocument()
   })
 
   it('acepta varios archivos y muestra el total', async () => {
     const user = userEvent.setup()
-    render(<FormularioNuevaOrden />)
+    montar()
 
     await user.upload(entradaDeArchivos(), [
       archivoDe('contrato.pdf', 240 * 1024 ** 2),
@@ -45,7 +54,7 @@ describe('FormularioNuevaOrden — selección de archivos', () => {
 
   it('rechaza la tanda si el TOTAL pasa de 1 GB, no cada archivo por separado', async () => {
     const user = userEvent.setup()
-    render(<FormularioNuevaOrden />)
+    montar()
 
     // Ninguno de los dos llega al tope por su cuenta; juntos sí lo pasan.
     await user.upload(entradaDeArchivos(), [archivoDe('a.mov', 0.6 * GB)])
@@ -60,7 +69,7 @@ describe('FormularioNuevaOrden — selección de archivos', () => {
 
   it('ignora el mismo archivo elegido dos veces', async () => {
     const user = userEvent.setup()
-    render(<FormularioNuevaOrden />)
+    montar()
 
     await user.upload(entradaDeArchivos(), [archivoDe('foto.png', 1024)])
     await user.upload(entradaDeArchivos(), [archivoDe('foto.png', 1024)])
@@ -71,7 +80,7 @@ describe('FormularioNuevaOrden — selección de archivos', () => {
 
   it('permite quitar un archivo de la lista', async () => {
     const user = userEvent.setup()
-    render(<FormularioNuevaOrden />)
+    montar()
 
     await user.upload(entradaDeArchivos(), [
       archivoDe('uno.txt', 2048),
@@ -82,5 +91,16 @@ describe('FormularioNuevaOrden — selección de archivos', () => {
     expect(screen.queryByText('uno.txt')).not.toBeInTheDocument()
     expect(screen.getByText('dos.txt')).toBeInTheDocument()
     expect(screen.getByText(/1 archivo · 1 KB/)).toBeInTheDocument()
+  })
+
+  it('los campos de comprador y monto son editables', async () => {
+    const user = userEvent.setup()
+    montar()
+
+    await user.type(screen.getByLabelText('@usuario del comprador'), '@trq-abcd')
+    await user.type(screen.getByLabelText('Monto en COP'), '450000')
+
+    expect(screen.getByLabelText('@usuario del comprador')).toHaveValue('@trq-abcd')
+    expect(screen.getByLabelText('Monto en COP')).toHaveValue('450000')
   })
 })

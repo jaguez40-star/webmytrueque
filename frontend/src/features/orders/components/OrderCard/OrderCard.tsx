@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowDown, ArrowUp, Clock, Download, FileText, Lock } from 'lucide-react'
 import { StateChip } from '../StateChip'
 import { OrderStepper } from '../OrderStepper'
-import { esMiTurno, type Order } from '../../types'
+import { esMiTurno, resumenDeArchivos, type Order } from '../../types'
 import { formatearMonto, formatearPeso, tiempoRestante } from '../../utils/format'
 import styles from './OrderCard.module.scss'
 
@@ -89,8 +89,10 @@ export function OrderCard({ orden }: OrderCardProps) {
           <FileText size={18} aria-hidden="true" />
         </span>
         <div className={styles.archivoDatos}>
-          <span className={styles.archivoNombre}>{orden.archivo.nombre}</span>
-          <span className={styles.archivoMeta}>{formatearPeso(orden.archivo.bytes)}</span>
+          <span className={styles.archivoNombre}>{resumenDeArchivos(orden).nombre}</span>
+          <span className={styles.archivoMeta}>
+            {formatearPeso(resumenDeArchivos(orden).bytes)}
+          </span>
         </div>
         <span className={styles.monto}>{formatearMonto(orden.montoCop)}</span>
       </div>

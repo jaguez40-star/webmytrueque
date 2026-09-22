@@ -109,6 +109,34 @@
   }
 }
 
+/* ── Progreso de subida ── */
+
+.progreso {
+  margin-top: 12px;
+}
+
+.progresoBarra {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--c-border);
+  overflow: hidden;
+}
+
+.progresoRelleno {
+  height: 100%;
+  background: var(--c-accent);
+  border-radius: var(--r-pill);
+  transition: width 0.2s ease;
+}
+
+.progresoTexto {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--c-text-secondary);
+}
+
 /* ── Archivos elegidos ── */
 
 .errorSubida {

@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.core.db import Base
 from src.features.auth.models import User  # noqa: F401 — registra el modelo en Base.metadata
+from src.features.orders.models import Order, OrderFile  # noqa: F401 — ídem
 
 target_metadata = Base.metadata
 
