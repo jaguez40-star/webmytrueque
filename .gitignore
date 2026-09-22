@@ -5,6 +5,10 @@ Thumbs.db
 !.vscode/extensions.json
 .idea/
 
+# Respaldos de trabajo (ej. una versión anterior de un plan al reescribirlo).
+# No se versionan: el documento vigente ya explica qué cambió y por qué.
+*.bak
+
 # Python (por si se crea algo suelto en la raíz)
 __pycache__/
 *.pyc
