@@ -1,0 +1,48 @@
+@use '@/styles/mixins' as *;
+
+.grupo {
+  display: flex;
+  gap: 4px;
+  background: var(--c-tabs-bg);
+  border-radius: 11px;
+  padding: 4px;
+}
+
+.opcion {
+  // 🔴 H9 — 44px, no 40. La regla 7.6 de este plan exige 44px como mínimo absoluto y la
+  // v3 escribía 40 aquí: el código contradecía su propia regla. Medido en Chromium.
+  @include objetivo-tactil(44px);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-text-secondary);
+  cursor: pointer;
+}
+
+.activa {
+  background: var(--c-surface);
+  box-shadow: var(--sh-tab);
+  color: var(--c-ink);
+  font-weight: 600;
+}
+
+.contador {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border-radius: var(--r-pill);
+  padding: 2px 7px;
+  background: var(--c-border);
+  color: var(--c-text-secondary);
+}
+
+.contadorActivo {
+  background: var(--c-accent);
+  color: #ffffff;
+}

@@ -1,0 +1,38 @@
+@use '@/styles/mixins' as *;
+
+.chip {
+  @include mono-label(10px, 0.04em);
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+  white-space: nowrap;
+
+  @include desde-md {
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    padding: 4px 11px;
+  }
+}
+
+.activo {
+  background: var(--c-accent);
+  color: #ffffff;
+}
+
+.listo {
+  background: var(--c-surface);
+  border: 1px solid var(--c-accent);
+  color: var(--c-accent-text);
+}
+
+.exito {
+  background: var(--c-signal);
+  color: var(--c-on-signal-strong);
+}
+
+.neutro {
+  background: transparent;
+  border: 1px solid var(--c-border-strong);
+  color: var(--c-text-secondary);
+}

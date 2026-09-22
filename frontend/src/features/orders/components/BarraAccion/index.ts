@@ -1,0 +1,1 @@
+export { BarraAccion } from './BarraAccion'

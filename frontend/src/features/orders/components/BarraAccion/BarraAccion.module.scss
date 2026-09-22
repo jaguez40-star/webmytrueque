@@ -1,0 +1,32 @@
+@use '@/styles/mixins' as *;
+
+.barra {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--c-surface) 94%, transparent);
+  border-top: 1px solid var(--c-border);
+  // El desenfoque es un adorno: si el navegador no lo soporta, el color de arriba ya
+  // deja el texto legible por sí solo.
+  backdrop-filter: blur(12px);
+}
+
+.interior {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 12px var(--pad-movil) calc(12px + var(--safe-bottom));
+
+  @include desde-md {
+    padding: 14px var(--content-pad) calc(14px + var(--safe-bottom));
+  }
+}
+
+.nota {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--c-text-secondary);
+  text-align: center;
+  margin-bottom: 10px;
+}

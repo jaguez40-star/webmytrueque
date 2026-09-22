@@ -1,0 +1,178 @@
+@use '@/styles/mixins' as *;
+
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 14px 15px 15px;
+}
+
+// Las órdenes que esperan una acción del usuario llevan el borde de acento a la
+// izquierda: es lo que separa "te toca" de "esperando" sin leer una palabra.
+.cardActiva {
+  border-color: var(--c-border-strong);
+  border-left: 4px solid var(--c-accent);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.identidad {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.numero {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--c-ink);
+  flex: none;
+}
+
+.rol {
+  @include mono-label(10.5px, 0.05em);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--c-text-secondary);
+  flex: none;
+}
+
+.contraparte {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--c-accent-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archivo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 12px;
+}
+
+.archivoIcono {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--c-surface-accent);
+  color: var(--c-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.archivoDatos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.archivoNombre {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archivoMeta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--c-text-muted);
+}
+
+.monto {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--c-ink);
+  white-space: nowrap;
+  flex: none;
+}
+
+.stepperFila {
+  margin-top: 13px;
+}
+
+.accionTitulo {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--c-ink);
+  margin-top: 13px;
+}
+
+.reloj {
+  @include mono-label(11.5px, 0.04em);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  color: var(--c-alert);
+}
+
+.botonAccent,
+.botonOscuro {
+  @include objetivo-tactil(48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.botonAccent {
+  background: var(--c-accent);
+  color: #ffffff;
+
+  &:hover {
+    background: var(--c-accent-hover);
+    color: #ffffff;
+  }
+}
+
+.botonOscuro {
+  background: var(--c-ink);
+  color: var(--c-on-dark);
+
+  &:hover {
+    color: #ffffff;
+  }
+}
+
+.iconoSignal {
+  color: var(--c-signal);
+}
+
+.espera {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--c-text-secondary);
+  margin-top: 11px;
+}
+
+.purga {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--c-text-muted);
+  margin-left: 4px;
+}

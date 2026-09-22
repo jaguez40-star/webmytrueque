@@ -1,0 +1,444 @@
+@use '@/styles/mixins' as *;
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rol {
+  @include mono-label(11px, 0.04em);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--c-text-secondary);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
+  padding: 4px 10px;
+}
+
+/* ── Acción pendiente (bloque oscuro) ── */
+
+.accion {
+  background: var(--c-ink);
+  border-radius: var(--r-card);
+  padding: 18px;
+  margin-top: 14px;
+
+  @include desde-md {
+    padding: 24px 26px;
+  }
+}
+
+.accionEtiqueta {
+  @include mono-label(10.5px, 0.08em);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--c-signal);
+}
+
+.accionPunto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-signal);
+}
+
+.accionTitulo {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: #ffffff;
+  margin-top: 11px;
+
+  @include desde-md {
+    font-size: 22px;
+  }
+}
+
+.accionTexto {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--c-on-dark-secondary);
+  margin-top: 9px;
+}
+
+.reloj {
+  @include mono-label(12px, 0.04em);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-on-dark-border);
+  color: var(--c-signal);
+}
+
+/* ── Tarjetas ── */
+
+.tarjeta,
+.tarjetaMonto {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 14px;
+}
+
+.tarjetaMonto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.tarjetaCabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tarjetaTitulo {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+
+.selloVerificable {
+  @include mono-label(10px, 0.04em);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--c-signal);
+  color: var(--c-on-signal-strong);
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+}
+
+/* ── Monto ── */
+
+.montoEtiqueta {
+  @include mono-label(10px, 0.08em);
+  color: var(--c-text-muted);
+}
+
+.monto {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--c-ink);
+  margin-top: 4px;
+}
+
+.montoMoneda {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-text-secondary);
+}
+
+.contraparte {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contraparteNombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+
+.contraparteHandle {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--c-accent-text);
+}
+
+.contraparteOps {
+  font-size: 12px;
+  color: var(--c-text-muted);
+}
+
+/* ── Archivo ── */
+
+.archivo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.archivoIcono {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--c-surface-accent);
+  color: var(--c-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.archivoDatos {
+  min-width: 0;
+}
+
+.archivoNombre {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--c-ink);
+  // El nombre puede ser largo: en un teléfono se parte en vez de desbordar.
+  overflow-wrap: anywhere;
+}
+
+.archivoFecha {
+  display: block;
+  font-size: 13px;
+  color: var(--c-text-secondary);
+  margin-top: 3px;
+}
+
+.metadatos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-border-inner);
+
+  dt {
+    @include mono-label(9.5px, 0.07em);
+    color: var(--c-text-muted);
+  }
+
+  dd {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--c-ink);
+    margin: 4px 0 0;
+  }
+}
+
+/* ── Comprobante ── */
+
+.comprobante {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 13px;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.comprobanteIcono {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  color: var(--c-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comprobanteDatos {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.comprobanteNombre {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--c-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comprobanteMeta {
+  display: block;
+  font-size: 12.5px;
+  color: var(--c-text-secondary);
+  margin-top: 2px;
+}
+
+.comprobanteVer {
+  @include objetivo-tactil(44px);
+  flex: none;
+  min-width: 60px;
+  border: 1px solid var(--c-border-button);
+  background: var(--c-surface);
+  color: var(--c-ink);
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.comprobanteNota {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--c-text-secondary);
+  margin-top: 11px;
+
+  strong {
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+}
+
+/* ── Línea de tiempo ── */
+
+.linea {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lineaItem {
+  display: flex;
+  gap: 12px;
+}
+
+.lineaPunto {
+  width: 11px;
+  height: 11px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--c-surface);
+  border: 2px solid var(--c-border-strong);
+  box-sizing: border-box;
+  margin-top: 3px;
+}
+
+.lineaPuntoHecho {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.lineaPuntoActual {
+  width: 13px;
+  height: 13px;
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3.5px var(--c-accent-halo);
+  margin-top: 2px;
+}
+
+.lineaCuerpo {
+  flex-grow: 1;
+  margin-left: -17px;
+  padding-left: 29px;
+  padding-bottom: 14px;
+  border-left: 2px dashed var(--c-border);
+
+  .lineaItem:last-child & {
+    border-left: none;
+    padding-bottom: 0;
+  }
+}
+
+.lineaCuerpoHecho {
+  border-left: 2px solid var(--c-accent);
+}
+
+.lineaEtiqueta {
+  @include mono-label(11px, 0.04em);
+  display: block;
+  font-weight: 500;
+  color: var(--c-text-muted);
+}
+
+.lineaEtiquetaActual {
+  color: var(--c-accent-text);
+}
+
+.lineaTexto {
+  display: block;
+  font-size: 13px;
+  color: var(--c-text-secondary);
+  margin-top: 2px;
+}
+
+/* ── Barra de acción ── */
+
+.barraFila {
+  display: flex;
+  gap: 10px;
+}
+
+.botonProblema {
+  @include objetivo-tactil(52px);
+  flex: none;
+  width: 52px;
+  border: 1px solid var(--c-border-button);
+  background: var(--c-surface);
+  color: var(--c-text-secondary);
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--c-alert);
+    color: var(--c-alert);
+  }
+}
+
+.botonPrincipal {
+  @include objetivo-tactil(52px);
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--c-signal);
+  color: var(--c-on-signal-strong);
+  border: none;
+  border-radius: 13px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--c-signal-hover);
+  }
+}
+
+/* ── Pie ── */
+
+.esperaPie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 13.5px;
+  color: var(--c-text-secondary);
+  text-align: center;
+}
+
+.volverPie {
+  @include objetivo-tactil(48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  font-size: 14.5px;
+  font-weight: 500;
+}

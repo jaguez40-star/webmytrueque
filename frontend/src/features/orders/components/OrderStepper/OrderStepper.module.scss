@@ -1,0 +1,61 @@
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.etapa {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+
+  &:last-child {
+    flex-grow: 0;
+  }
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--c-border);
+}
+
+.puntoRecorrido {
+  background: var(--c-accent);
+}
+
+.puntoActual {
+  width: 12px;
+  height: 12px;
+  background: var(--c-accent);
+  box-shadow: 0 0 0 3.5px var(--c-accent-halo);
+}
+
+.linea {
+  flex-grow: 1;
+  height: 2px;
+  margin: 0 4px;
+  background: var(--c-border);
+}
+
+.lineaRecorrida {
+  background: var(--c-accent);
+}
+
+// Texto solo para lectores de pantalla: el stepper visual son puntos sin palabras.
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

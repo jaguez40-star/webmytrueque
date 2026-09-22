@@ -9,6 +9,8 @@
   --c-accent-light: oklch(0.65 0.18 300);
   --c-accent-text: oklch(0.42 0.16 300);
   --c-accent-mid: oklch(0.45 0.16 300);
+  // Halo del punto activo en steppers y líneas de tiempo.
+  --c-accent-halo: oklch(0.88 0.06 300);
 
   // --- Señal (lima) — SOLO éxito ---
   --c-signal: oklch(0.85 0.16 120);
@@ -55,6 +57,12 @@
   --content-max: 1180px;
   --content-pad: 32px;
   --content-pad-mobile: 18px;
+  // Márgenes laterales del panel en teléfono.
+  --pad-movil: 16px;
+  // Alto de la barra de acción fija.
+  --alto-barra: 84px;
+  // Respeto al indicador de inicio de iOS y a las barras de gestos de Android.
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 
   // --- Radios ---
   --r-button: 8px;

@@ -27,3 +27,31 @@
   letter-spacing: $tracking;
   text-transform: uppercase;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mobile-first: los de arriba son max-width (se escribe escritorio y se corrige
+// hacia abajo). Estos son min-width: se escribe el TELÉFONO como base, sin media
+// query, y aquí dentro va solo lo que cambia en pantallas grandes.
+// El panel usa exclusivamente estos dos.
+// ─────────────────────────────────────────────────────────────────────────────
+
+@mixin desde-md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin desde-lg {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// Todo lo que se toca con el dedo. 48px es el mínimo cómodo en un teléfono; los
+// botones actuales de la landing miden 38px y se fallan. `touch-action` elimina el
+// retardo de 300ms que algunos navegadores móviles aplican esperando un doble toque.
+@mixin objetivo-tactil($alto: 48px) {
+  min-height: $alto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

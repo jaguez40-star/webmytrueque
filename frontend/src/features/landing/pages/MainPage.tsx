@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Hero } from '../components/Hero'
 import { HowItWorks } from '../components/HowItWorks'
@@ -7,7 +8,7 @@ import { Guarantees } from '../components/Guarantees'
 import { Faq } from '../components/Faq'
 import { Footer } from '../components/Footer'
 import type { AuthTab } from '@/features/auth/components/AuthPanel'
-import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import styles from './MainPage.module.scss'
 
 /** Mensajes para los códigos que devuelve el callback de Google. */
@@ -23,7 +24,7 @@ const MOTIVOS_DE_ERROR: Record<string, string> = {
  * Lee "?auth=error&reason=..." UNA sola vez, al cargar el módulo, y limpia la URL.
  * Fuera del componente a propósito: es un efecto de navegación que ocurre una vez por
  * carga de página, no por montaje. Hacerlo en useEffect + setState dispara un render en
- * cascada (oxlint react/set-state-in-effect) y se repetiría en StrictMode (H3).
+ * cascada (oxlint react/set-state-in-effect) y se repetiría en StrictMode.
  */
 function leerErrorDeGoogleDeLaUrl(): string | null {
   if (typeof window === 'undefined') return null
@@ -39,14 +40,23 @@ function leerErrorDeGoogleDeLaUrl(): string | null {
 const ERROR_DE_GOOGLE_INICIAL = leerErrorDeGoogleDeLaUrl()
 
 export function MainPage() {
-  useCurrentUser()
   const [authTab, setAuthTab] = useState<AuthTab>('login')
   const [googleError] = useState<string | null>(ERROR_DE_GOOGLE_INICIAL)
+  const user = useAuthStore((state) => state.user)
+  const isHydrating = useAuthStore((state) => state.isHydrating)
 
   /** Cambia la pestaña y lleva al usuario al panel de acceso. */
   function goToAuth(tab: AuthTab) {
     setAuthTab(tab)
     document.getElementById('acceso')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  // Con sesión activa, la landing no es el sitio: el usuario ya entró y lo que necesita es
+  // su bandeja. Cubre los tres caminos de entrada (formulario, registro y vuelta de Google,
+  // que aterriza en "/"). El chequeo de isHydrating evita redirigir antes de saber si hay
+  // sesión — y va DESPUÉS de todos los hooks, nunca antes.
+  if (!isHydrating && user) {
+    return <Navigate to="/panel" replace />
   }
 
   return (

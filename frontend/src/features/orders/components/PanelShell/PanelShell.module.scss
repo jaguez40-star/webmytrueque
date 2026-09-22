@@ -1,0 +1,22 @@
+@use '@/styles/mixins' as *;
+
+.page {
+  min-height: 100vh;
+  background: var(--c-bg);
+}
+
+.main {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 18px var(--pad-movil) 32px;
+
+  @include desde-md {
+    padding: 28px var(--content-pad) 48px;
+  }
+}
+
+// Reserva el alto de la barra fija más un respiro, para que el último elemento de la
+// página no quede debajo de ella.
+.conBarra {
+  padding-bottom: calc(var(--alto-barra) + var(--safe-bottom) + 16px);
+}
