@@ -14,10 +14,12 @@ import { renderConWrappers, USUARIO_DE_PRUEBA } from '@/test/renderConWrappers'
 
 const autorizarDescarga = vi.fn()
 const descargarArchivo = vi.fn()
+const purgarOrden = vi.fn()
 
 vi.mock('../../services/ordersService', () => ({
   autorizarDescarga: (...args: unknown[]) => autorizarDescarga(...args),
   descargarArchivo: (...args: unknown[]) => descargarArchivo(...args),
+  purgarOrden: (...args: unknown[]) => purgarOrden(...args),
   obtenerOrdenes: () => Promise.resolve([]),
 }))
 
@@ -49,6 +51,7 @@ function orden(estado: OrderState, extra: Partial<Order> = {}): Order {
 beforeEach(() => {
   autorizarDescarga.mockReset().mockResolvedValue(orden('LIBERADO'))
   descargarArchivo.mockReset().mockResolvedValue(undefined)
+  purgarOrden.mockReset().mockResolvedValue(orden('PURGADO'))
 })
 
 describe('Vendedor — switch "Autorizo Descarga!"', () => {
@@ -90,6 +93,57 @@ describe('Vendedor — switch "Autorizo Descarga!"', () => {
 
     expect(screen.getByRole('switch', { name: /Autorizo Descarga/ })).toBeDisabled()
     expect(screen.getByText('El comprador ya descargó')).toBeInTheDocument()
+  })
+})
+
+describe('Vendedor — borrar los archivos', () => {
+  it('no borra al primer clic: pide confirmación y dice qué se pierde', async () => {
+    const usuario = userEvent.setup()
+    renderConWrappers(<GrillaArchivos ordenes={[orden('EN_CUSTODIA')]} rol="vendedor" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
+
+    await usuario.click(screen.getByRole('button', { name: /Borrar/ }))
+
+    expect(purgarOrden).not.toHaveBeenCalled()
+    expect(
+      screen.getByText(/Se borran para siempre y el comprador deja de verlos/),
+    ).toBeInTheDocument()
+  })
+
+  it('al confirmar manda el borrado', async () => {
+    const usuario = userEvent.setup()
+    renderConWrappers(<GrillaArchivos ordenes={[orden('EN_CUSTODIA')]} rol="vendedor" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
+
+    await usuario.click(screen.getByRole('button', { name: /^Borrar/ }))
+    await usuario.click(screen.getByRole('button', { name: /Sí, borrar/ }))
+
+    await waitFor(() => {
+      expect(purgarOrden).toHaveBeenCalledWith('7001')
+    })
+  })
+
+  it('cancelar deja todo como estaba', async () => {
+    const usuario = userEvent.setup()
+    renderConWrappers(<GrillaArchivos ordenes={[orden('EN_CUSTODIA')]} rol="vendedor" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
+
+    await usuario.click(screen.getByRole('button', { name: /^Borrar/ }))
+    await usuario.click(screen.getByRole('button', { name: /Cancelar/ }))
+
+    expect(purgarOrden).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: /^Borrar/ })).toBeInTheDocument()
+  })
+
+  it('el comprador NO puede borrar lo que compró: no son sus archivos', () => {
+    const compra = orden('LIBERADO', { rol: 'comprador' })
+    renderConWrappers(<GrillaArchivos ordenes={[compra]} rol="comprador" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
+    expect(screen.queryByRole('button', { name: /Borrar/ })).not.toBeInTheDocument()
   })
 })
 

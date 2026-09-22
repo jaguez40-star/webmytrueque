@@ -177,3 +177,87 @@
   line-height: 1.35;
   color: var(--c-alert);
 }
+
+/* ── Borrar los archivos (solo el vendedor) ── */
+
+// El switch a la izquierda, borrar a la derecha. `wrap` porque al confirmar el aviso crece
+// y a 390px no cabe al lado del switch: baja a su propia línea en vez de aplastarlo.
+.filaVendedor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+// Discreto a propósito: es destructivo, no es la acción que se busca en esta tarjeta.
+.botonPurgar {
+  @include objetivo-tactil(44px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: transparent;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-text-secondary);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--c-alert);
+    color: var(--c-alert);
+  }
+}
+
+.confirmacion {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  // Ocupa la línea entera: el aviso es una frase, no una etiqueta.
+  flex: 1 1 100%;
+}
+
+.confirmacionTexto {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--c-ink);
+}
+
+.confirmacionBotones {
+  display: flex;
+  gap: 8px;
+}
+
+.botonBorrarYa {
+  @include objetivo-tactil(44px);
+  padding: 0 14px;
+  background: var(--c-alert);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.botonCancelar {
+  @include objetivo-tactil(44px);
+  padding: 0 14px;
+  background: var(--c-surface);
+  color: var(--c-text-secondary);
+  border: 1px solid var(--c-border-strong);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}

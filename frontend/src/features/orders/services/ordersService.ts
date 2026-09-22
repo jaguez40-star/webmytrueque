@@ -125,3 +125,25 @@ export async function descargarArchivo(
   // Sin esto el blob se queda en memoria hasta recargar la página.
   URL.revokeObjectURL(url)
 }
+
+/**
+ * El vendedor borra los archivos de su orden, ahora y para siempre.
+ *
+ * Solo el vendedor: lo que el comprador tiene en custodia no es suyo, lo tiene disponible
+ * hasta los 30 días o hasta que el vendedor lo purgue. El backend responde 404 a cualquier
+ * otro, así que esto no es la única defensa, solo la visible.
+ */
+export async function purgarOrden(ordenId: string): Promise<Order> {
+  const respuesta = await fetch(`${BASE}/orders/${ordenId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!respuesta.ok) {
+    const detalle = await respuesta
+      .json()
+      .then((c: { detail?: unknown }) => (typeof c.detail === 'string' ? c.detail : null))
+      .catch(() => null)
+    throw new Error(detalle ?? 'No se pudieron borrar los archivos.')
+  }
+  return (await respuesta.json()) as Order
+}

@@ -215,6 +215,28 @@ def archivo_para_descarga(
     return archivo, ruta
 
 
+def purgar_orden(db: Session, orden_id: int, vendedor: User) -> Order:
+    """El vendedor borra los archivos de su orden, ahora y para siempre.
+
+    🔴 Solo el vendedor. El comprador NO puede purgar: lo que tiene en custodia no es
+    suyo, lo tiene disponible hasta los 30 días o hasta que el vendedor lo borre.
+
+    Se borran los bytes del disco y la orden pasa a `PURGADO`. Las filas de `order_files`
+    se conservan a propósito: dejan el rastro de qué hubo (nombre y SHA-256) sin ocupar
+    espacio, y `PURGADO` ya dice que los bytes no están. Idempotente: purgar dos veces no
+    es un error, la segunda no tiene nada que borrar.
+    """
+    orden = _buscar_orden(db, orden_id)
+    if orden.seller_id != vendedor.id:
+        raise NoEresElVendedorError
+
+    borrar_carpeta(get_settings().custodia_path / str(orden.id))
+    orden.state = "PURGADO"
+    db.commit()
+    db.refresh(orden)
+    return orden
+
+
 def listar_ordenes(db: Session, usuario: User) -> list[Order]:
     """Las órdenes donde el usuario es vendedor O comprador, las más recientes primero.
 

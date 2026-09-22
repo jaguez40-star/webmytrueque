@@ -365,3 +365,64 @@ def test_no_descargar_no_borra_el_archivo_del_disco(client: TestClient) -> None:
     assert len(list(carpeta.iterdir())) == 1
     # Y se puede volver a bajar.
     assert client.get(f"/orders/{orden_id}/archivos/{archivo_id}").status_code == 200
+
+
+def test_el_vendedor_purga_sus_archivos_y_desaparecen_del_disco(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c27@correo.com", "v27@correo.com")
+    carpeta = get_settings().custodia_path / orden_id
+    assert carpeta.is_dir()
+
+    respuesta = client.delete(f"/orders/{orden_id}")
+    assert respuesta.status_code == 200
+    assert respuesta.json()["estado"] == "PURGADO"
+    # Los bytes no están en ningún lado.
+    assert not carpeta.exists()
+
+
+def test_el_comprador_no_puede_purgar_lo_que_compro(client: TestClient) -> None:
+    """Lo que tiene en custodia no es suyo: lo tiene disponible, no lo administra."""
+    orden_id = _crear_orden_entre(client, "c28@correo.com", "v28@correo.com")
+    _entrar(client, "c28@correo.com")
+
+    # 404 y no 403: un 403 le confirmaría que la orden existe y solo le falta permiso.
+    assert client.delete(f"/orders/{orden_id}").status_code == 404
+    # Y los archivos siguen ahí.
+    assert (get_settings().custodia_path / orden_id).is_dir()
+
+
+def test_un_tercero_no_puede_purgar_ordenes_ajenas(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c29@correo.com", "v29@correo.com")
+    client.post("/auth/logout")
+    _registrar(client, "ajeno29@correo.com")
+
+    assert client.delete(f"/orders/{orden_id}").status_code == 404
+    assert (get_settings().custodia_path / orden_id).is_dir()
+
+
+def test_tras_purgar_el_comprador_ya_no_puede_descargar(client: TestClient) -> None:
+    """La disponibilidad del comprador dura mientras el vendedor no purgue."""
+    orden_id = _crear_orden_entre(client, "c30@correo.com", "v30@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+    client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+    client.delete(f"/orders/{orden_id}")
+
+    _entrar(client, "c30@correo.com")
+    assert client.get(f"/orders/{orden_id}/archivos/{archivo_id}").status_code == 403
+
+
+def test_purgar_dos_veces_no_es_un_error(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c31@correo.com", "v31@correo.com")
+
+    assert client.delete(f"/orders/{orden_id}").status_code == 200
+    segunda = client.delete(f"/orders/{orden_id}")
+    assert segunda.status_code == 200
+    assert segunda.json()["estado"] == "PURGADO"
+
+
+def test_purgar_conserva_el_rastro_de_que_hubo(client: TestClient) -> None:
+    """Se borran los bytes, no la historia: nombre y hash siguen en la orden."""
+    orden_id = _crear_orden_entre(client, "c32@correo.com", "v32@correo.com")
+
+    purgada = client.delete(f"/orders/{orden_id}").json()
+    assert purgada["archivos"][0]["nombre"] == "entrega.bin"
+    assert len(purgada["archivos"][0]["hash"]) == 64

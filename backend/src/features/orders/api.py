@@ -26,6 +26,7 @@ from src.features.orders.service import (
     cambiar_autorizacion,
     crear_orden,
     listar_ordenes,
+    purgar_orden,
     serializar_lote,
     serializar_orden,
 )
@@ -107,6 +108,19 @@ def autorizar(
             status.HTTP_409_CONFLICT,
             "El comprador ya descargó los archivos: la autorización no se puede revocar.",
         ) from exc
+
+    return serializar_orden(db, orden, usuario)
+
+
+@router.delete("/{orden_id}", response_model=OrderOut)
+def purgar(orden_id: int, db: DbDep, usuario: UsuarioDep) -> OrderOut:
+    """El vendedor borra los archivos de su orden. El comprador no puede: no son suyos."""
+    try:
+        orden = purgar_orden(db, orden_id, usuario)
+    except (OrdenNoEncontradaError, NoEresElVendedorError) as exc:
+        # 404 también para el comprador: quien no vende esta orden no la puede tocar, y un
+        # 403 confirmaría que existe.
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Esa orden no existe.") from exc
 
     return serializar_orden(db, orden, usuario)
 

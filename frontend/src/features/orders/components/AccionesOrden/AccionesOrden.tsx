@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Download, Loader2 } from 'lucide-react'
+import { Download, Loader2, Trash2 } from 'lucide-react'
 import { CLAVE_ORDENES } from '../../hooks/useOrders'
 import { useAutorizarDescarga } from '../../hooks/useAutorizarDescarga'
+import { usePurgarOrden } from '../../hooks/usePurgarOrden'
 import { descargarArchivo } from '../../services/ordersService'
 import type { Order, OrderRole } from '../../types'
 import styles from './AccionesOrden.module.scss'
@@ -41,29 +42,84 @@ function SwitchAutorizacion({ orden }: { orden: Order }) {
 
   return (
     <div className={styles.bloque}>
-      <label className={styles.switch}>
-        <span className={styles.etiqueta}>Autorizo Descarga!</span>
-        <span className={styles.control}>
-          <input
-            type="checkbox"
-            role="switch"
-            className={styles.input}
-            checked={autorizado}
-            disabled={isPending || yaDescargo}
-            onChange={(evento) =>
-              { mutate({ ordenId: orden.id, autorizado: evento.target.checked }) }
-            }
-          />
-          <span className={styles.pista} aria-hidden="true">
-            <span className={styles.bolita} />
+      <div className={styles.filaVendedor}>
+        <label className={styles.switch}>
+          <span className={styles.etiqueta}>Autorizo Descarga!</span>
+          <span className={styles.control}>
+            <input
+              type="checkbox"
+              role="switch"
+              className={styles.input}
+              checked={autorizado}
+              disabled={isPending || yaDescargo}
+              onChange={(evento) => {
+                mutate({ ordenId: orden.id, autorizado: evento.target.checked })
+              }}
+            />
+            <span className={styles.pista} aria-hidden="true">
+              <span className={styles.bolita} />
+            </span>
+            <span className={styles.valor} aria-hidden="true">
+              {autorizado ? 'SÍ' : 'NO'}
+            </span>
           </span>
-          <span className={styles.valor} aria-hidden="true">
-            {autorizado ? 'SÍ' : 'NO'}
-          </span>
-        </span>
-      </label>
+        </label>
+
+        <BotonPurgar orden={orden} />
+      </div>
 
       {yaDescargo && <span className={styles.nota}>El comprador ya descargó</span>}
+      {error && <span className={styles.error}>{error.message}</span>}
+    </div>
+  )
+}
+
+/**
+ * Borrar los archivos de la orden. Solo lo ve el vendedor: son suyos.
+ *
+ * Pide confirmación en el sitio en vez de borrar al primer clic — es irreversible y no hay
+ * papelera — y no usa `window.confirm`, que en móvil roba la pantalla entera y no se puede
+ * estilar. El aviso dice qué pierde el comprador, no solo "¿seguro?".
+ */
+function BotonPurgar({ orden }: { orden: Order }) {
+  const { mutate, isPending, error } = usePurgarOrden()
+  const [confirmando, setConfirmando] = useState(false)
+
+  if (!confirmando) {
+    return (
+      <button
+        type="button"
+        className={styles.botonPurgar}
+        onClick={() => { setConfirmando(true) }}
+      >
+        <Trash2 size={14} aria-hidden="true" />
+        Borrar
+      </button>
+    )
+  }
+
+  return (
+    <div className={styles.confirmacion}>
+      <span className={styles.confirmacionTexto}>
+        Se borran para siempre y el comprador deja de verlos.
+      </span>
+      <div className={styles.confirmacionBotones}>
+        <button
+          type="button"
+          className={styles.botonBorrarYa}
+          disabled={isPending}
+          onClick={() => { mutate(orden.id) }}
+        >
+          {isPending ? 'Borrando…' : 'Sí, borrar'}
+        </button>
+        <button
+          type="button"
+          className={styles.botonCancelar}
+          onClick={() => { setConfirmando(false) }}
+        >
+          Cancelar
+        </button>
+      </div>
       {error && <span className={styles.error}>{error.message}</span>}
     </div>
   )
