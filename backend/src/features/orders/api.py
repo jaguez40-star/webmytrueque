@@ -3,17 +3,27 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
 
 from src.core.storage import SinEspacioEnDiscoError
 from src.features.auth.dependencies import DbDep, get_current_user
 from src.features.auth.models import User
 from src.features.orders.schemas import OrderOut
 from src.features.orders.service import (
+    ArchivoNoEncontradoError,
     CompradorEsElVendedorError,
     CompradorNoEncontradoError,
     DemasiadoGrandeError,
     MontoInvalidoError,
+    NoAutorizadaError,
+    NoEresElCompradorError,
+    NoEresElVendedorError,
+    OrdenNoEncontradaError,
     SinArchivosError,
+    YaDescargadaError,
+    archivo_para_descarga,
+    cambiar_autorizacion,
     crear_orden,
     listar_ordenes,
     serializar_lote,
@@ -74,3 +84,45 @@ def crear(
 @router.get("", response_model=list[OrderOut])
 def listar(db: DbDep, usuario: UsuarioDep) -> list[OrderOut]:
     return serializar_lote(db, listar_ordenes(db, usuario), usuario)
+
+
+class AutorizacionIn(BaseModel):
+    autorizado: bool
+
+
+@router.put("/{orden_id}/autorizacion", response_model=OrderOut)
+def autorizar(
+    orden_id: int, payload: AutorizacionIn, db: DbDep, usuario: UsuarioDep
+) -> OrderOut:
+    """El interruptor "Autorizo descarga" del vendedor. Idempotente: manda el estado que quiere."""
+    try:
+        orden = cambiar_autorizacion(db, orden_id, usuario, payload.autorizado)
+    except OrdenNoEncontradaError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Esa orden no existe.") from exc
+    except NoEresElVendedorError as exc:
+        # 404 y no 403: quien no vende esta orden no tiene por qué saber que existe.
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Esa orden no existe.") from exc
+    except YaDescargadaError as exc:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "El comprador ya descargó los archivos: la autorización no se puede revocar.",
+        ) from exc
+
+    return serializar_orden(db, orden, usuario)
+
+
+@router.get("/{orden_id}/archivos/{archivo_id}")
+def descargar(orden_id: int, archivo_id: int, db: DbDep, usuario: UsuarioDep) -> FileResponse:
+    """Descarga un archivo de la orden. Solo el comprador, y solo si el vendedor autorizó."""
+    try:
+        archivo, ruta = archivo_para_descarga(db, orden_id, archivo_id, usuario)
+    except (OrdenNoEncontradaError, NoEresElCompradorError, ArchivoNoEncontradoError) as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ese archivo no existe.") from exc
+    except NoAutorizadaError as exc:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            "El vendedor todavía no autorizó la descarga.",
+        ) from exc
+
+    # `filename` devuelve el nombre ORIGINAL, no el UUID con el que se guardó en disco.
+    return FileResponse(ruta, filename=archivo.original_name)

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FileUp } from 'lucide-react'
+import { AccionesOrden } from '../AccionesOrden'
 import { StateChip } from '../StateChip'
 import { estaCerrada, type Order, type OrderRole } from '../../types'
 import { formatearPeso } from '../../utils/format'
@@ -56,9 +57,9 @@ export function GrillaArchivos({ ordenes, rol }: GrillaArchivosProps) {
         <ul className={styles.grilla}>
           {abiertas.map((orden) =>
             orden.archivos.length > 1 ? (
-              <TarjetaAgrupada key={orden.id} orden={orden} preposicion={copy.preposicion} />
+              <TarjetaAgrupada key={orden.id} orden={orden} preposicion={copy.preposicion} rol={rol} />
             ) : (
-              <TarjetaArchivo key={orden.id} orden={orden} preposicion={copy.preposicion} />
+              <TarjetaArchivo key={orden.id} orden={orden} preposicion={copy.preposicion} rol={rol} />
             ),
           )}
         </ul>
@@ -71,15 +72,18 @@ interface TarjetaProps {
   orden: Order
   /** "para" en ventas ("para @comprador"), "de" en compras ("de @vendedor"). */
   preposicion: string
+  rol: OrderRole
 }
 
 /** Una orden con un solo archivo: el tile compacto de siempre, extensión + nombre + peso. */
-function TarjetaArchivo({ orden, preposicion }: TarjetaProps) {
+function TarjetaArchivo({ orden, preposicion, rol }: TarjetaProps) {
   const archivo = orden.archivos[0]
   if (!archivo) return null
 
   return (
-    <li>
+    // La acción va FUERA del enlace: un botón dentro de un <a> es HTML inválido y, en la
+    // práctica, un clic en el switch acabaría navegando al detalle.
+    <li className={styles.celda}>
       <Link to={`/panel/orden/${orden.id}`} className={styles.tile}>
         <div className={styles.tileTop}>
           <span className={styles.extension}>
@@ -92,6 +96,7 @@ function TarjetaArchivo({ orden, preposicion }: TarjetaProps) {
           {formatearPeso(archivo.bytes)} · {preposicion} {orden.contraparte.handle}
         </span>
       </Link>
+      <AccionesOrden orden={orden} rol={rol} />
     </li>
   )
 }
@@ -102,7 +107,7 @@ function TarjetaArchivo({ orden, preposicion }: TarjetaProps) {
  * "3 archivos" sin más detalle escondía. La contraparte se muestra una sola vez, al pie: es
  * la misma para todos los archivos de la orden.
  */
-function TarjetaAgrupada({ orden, preposicion }: TarjetaProps) {
+function TarjetaAgrupada({ orden, preposicion, rol }: TarjetaProps) {
   return (
     <li className={styles.filaAncha}>
       <Link to={`/panel/orden/${orden.id}`} className={styles.tileGrupo}>
@@ -125,6 +130,7 @@ function TarjetaAgrupada({ orden, preposicion }: TarjetaProps) {
           {preposicion} {orden.contraparte.handle}
         </span>
       </Link>
+      <AccionesOrden orden={orden} rol={rol} />
     </li>
   )
 }

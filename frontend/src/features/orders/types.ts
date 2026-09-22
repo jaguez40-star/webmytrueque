@@ -21,6 +21,8 @@ export type OrderState = (typeof ORDER_STATES)[number]
 export type OrderRole = 'vendedor' | 'comprador'
 
 export interface OrderFile {
+  /** Id de la fila en el backend. Se usa para armar la URL de descarga. */
+  id?: string
   nombre: string
   extension: string
   /** Tamaño en bytes. Se formatea para mostrar; nunca se muestra crudo. */
@@ -65,6 +67,11 @@ export interface Order {
   liberaAutomaticaEn: string | null
   /** Cuándo se purga el archivo si la orden no cierra (30 días). */
   purgaEn: string | null
+  /**
+   * Cuándo el comprador descargó por primera vez. `null` = todavía no.
+   * Mientras sea null, el vendedor aún puede revocar la autorización de descarga.
+   */
+  descargadoEn?: string | null
   comprobante: OrderReceipt | null
   /** Dónde le pagan al vendedor. Solo en las órdenes propias. */
   cuentaDeCobro?: string

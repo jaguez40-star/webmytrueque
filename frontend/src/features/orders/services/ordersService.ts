@@ -70,3 +70,58 @@ export async function obtenerOrdenes(): Promise<Order[]> {
   if (error || !data) return []
   return data as unknown as Order[]
 }
+
+/**
+ * El interruptor "Autorizo descarga" del vendedor.
+ *
+ * Idempotente: manda el estado deseado, no alterna a ciegas — si dos pestañas lo tocan a
+ * la vez, las dos acaban en lo mismo en vez de cancelarse entre ellas.
+ */
+export async function autorizarDescarga(ordenId: string, autorizado: boolean): Promise<Order> {
+  const respuesta = await fetch(`${BASE}/orders/${ordenId}/autorizacion`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ autorizado }),
+  })
+  if (!respuesta.ok) {
+    const detalle = await respuesta
+      .json()
+      .then((c: { detail?: unknown }) => (typeof c.detail === 'string' ? c.detail : null))
+      .catch(() => null)
+    throw new Error(detalle ?? 'No se pudo cambiar la autorización.')
+  }
+  return (await respuesta.json()) as Order
+}
+
+/**
+ * Baja un archivo de la orden al disco del comprador.
+ *
+ * Va por `fetch` + blob y no por un `<a download>` directo porque la petición necesita la
+ * cookie de sesión: en desarrollo el backend está en otro origen (:8000) y una navegación
+ * normal no la mandaría.
+ */
+export async function descargarArchivo(
+  ordenId: string,
+  archivoId: string,
+  nombre: string,
+): Promise<void> {
+  const respuesta = await fetch(`${BASE}/orders/${ordenId}/archivos/${archivoId}`, {
+    credentials: 'include',
+  })
+  if (!respuesta.ok) {
+    if (respuesta.status === 403) throw new Error('El vendedor todavía no autorizó la descarga.')
+    throw new Error('No se pudo descargar el archivo.')
+  }
+
+  const blob = await respuesta.blob()
+  const url = URL.createObjectURL(blob)
+  const enlace = document.createElement('a')
+  enlace.href = url
+  enlace.download = nombre
+  document.body.appendChild(enlace)
+  enlace.click()
+  enlace.remove()
+  // Sin esto el blob se queda en memoria hasta recargar la página.
+  URL.revokeObjectURL(url)
+}

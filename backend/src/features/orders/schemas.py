@@ -22,6 +22,8 @@ def _a_iso_utc(valor: datetime | None) -> str | None:
 
 
 class OrderFileOut(BaseModel):
+    # Lo necesita el frontend para armar la URL de descarga del archivo concreto.
+    id: str
     nombre: str
     extension: str
     bytes: int
@@ -53,8 +55,11 @@ class OrderOut(BaseModel):
     creadaEn: datetime  # noqa: N815
     liberaAutomaticaEn: datetime | None  # noqa: N815
     purgaEn: datetime | None  # noqa: N815
+    # Primera descarga del comprador. Null = todavía no descargó, y por tanto el vendedor
+    # aún puede revocar la autorización.
+    descargadoEn: datetime | None = None  # noqa: N815
     comprobante: None = None
 
-    @field_serializer("creadaEn", "liberaAutomaticaEn", "purgaEn")
+    @field_serializer("creadaEn", "liberaAutomaticaEn", "purgaEn", "descargadoEn")
     def _serializar_fechas(self, valor: datetime | None) -> str | None:
         return _a_iso_utc(valor)

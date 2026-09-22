@@ -260,3 +260,108 @@ def test_el_middleware_corta_por_content_length_antes_de_leer(client: TestClient
     # Nada escrito: el cuerpo ni se parseó.
     raiz = ajustes.custodia_path
     assert not raiz.exists() or not any(raiz.iterdir())
+
+
+def _crear_orden_entre(client: TestClient, correo_comprador: str, correo_vendedor: str) -> str:
+    """Deja la sesión abierta como VENDEDOR y devuelve el id de la orden creada."""
+    handle_comprador = _registrar(client, correo_comprador)
+    client.post("/auth/logout")
+    _registrar(client, correo_vendedor)
+    respuesta = client.post(
+        "/orders",
+        data={"comprador": handle_comprador, "monto": "10000"},
+        files=[_archivo("entrega.bin", b"contenido descargable")],
+    )
+    assert respuesta.status_code == 201
+    return str(respuesta.json()["id"])
+
+
+def _entrar(client: TestClient, correo: str) -> None:
+    client.post("/auth/logout")
+    respuesta = client.post("/auth/login", json={"email": correo, "password": "contrasena12"})
+    assert respuesta.status_code == 200
+
+
+def test_el_vendedor_autoriza_y_revoca_la_descarga(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c20@correo.com", "v20@correo.com")
+
+    autorizada = client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+    assert autorizada.status_code == 200
+    assert autorizada.json()["estado"] == "LIBERADO"
+
+    # Mientras nadie descargue, puede echarse atrás.
+    revocada = client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": False})
+    assert revocada.status_code == 200
+    assert revocada.json()["estado"] == "EN_CUSTODIA"
+
+
+def test_el_comprador_no_puede_autorizar_su_propia_compra(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c21@correo.com", "v21@correo.com")
+    _entrar(client, "c21@correo.com")
+
+    respuesta = client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+    # 404 y no 403: a quien no es el vendedor ni se le confirma que la orden existe.
+    assert respuesta.status_code == 404
+
+
+def test_sin_autorizacion_la_descarga_se_rechaza(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c22@correo.com", "v22@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+    _entrar(client, "c22@correo.com")
+
+    respuesta = client.get(f"/orders/{orden_id}/archivos/{archivo_id}")
+    assert respuesta.status_code == 403
+    assert "todavía no autorizó" in respuesta.json()["detail"]
+
+
+def test_autorizada_el_comprador_descarga_el_contenido_real(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c23@correo.com", "v23@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+    client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+    _entrar(client, "c23@correo.com")
+
+    respuesta = client.get(f"/orders/{orden_id}/archivos/{archivo_id}")
+    assert respuesta.status_code == 200
+    assert respuesta.content == b"contenido descargable"
+    # El nombre que llega es el ORIGINAL, no el UUID con el que se guardó.
+    assert "entrega.bin" in respuesta.headers["content-disposition"]
+
+
+def test_tras_descargar_el_vendedor_ya_no_puede_revocar(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c24@correo.com", "v24@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+    client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+
+    _entrar(client, "c24@correo.com")
+    assert client.get(f"/orders/{orden_id}/archivos/{archivo_id}").status_code == 200
+    # La descarga queda registrada y es visible para las dos partes.
+    assert client.get("/orders").json()[0]["descargadoEn"] is not None
+
+    _entrar(client, "v24@correo.com")
+    revocar = client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": False})
+    assert revocar.status_code == 409
+    assert "ya descargó" in revocar.json()["detail"]
+
+
+def test_un_tercero_no_puede_descargar_archivos_ajenos(client: TestClient) -> None:
+    orden_id = _crear_orden_entre(client, "c25@correo.com", "v25@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+    client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+
+    client.post("/auth/logout")
+    _registrar(client, "ajeno25@correo.com")
+    assert client.get(f"/orders/{orden_id}/archivos/{archivo_id}").status_code == 404
+
+
+def test_no_descargar_no_borra_el_archivo_del_disco(client: TestClient) -> None:
+    """Se decidió NO purgar al descargar: una descarga cortada se puede reintentar."""
+    orden_id = _crear_orden_entre(client, "c26@correo.com", "v26@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+    client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+    _entrar(client, "c26@correo.com")
+
+    assert client.get(f"/orders/{orden_id}/archivos/{archivo_id}").status_code == 200
+    carpeta = get_settings().custodia_path / orden_id
+    assert len(list(carpeta.iterdir())) == 1
+    # Y se puede volver a bajar.
+    assert client.get(f"/orders/{orden_id}/archivos/{archivo_id}").status_code == 200

@@ -39,6 +39,13 @@ class Order(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=ahora_utc)
     # Cuándo se purgan los archivos si la orden no cierra (30 días). Lo calcula el servicio.
     purge_at: Mapped[datetime] = mapped_column(DateTime)
+    # Primera vez que el comprador descargó algo. Nullable = todavía no descargó.
+    #
+    # 🔴 Existe para saber si el vendedor aún puede REVOCAR la autorización: puede hacerlo
+    # mientras esto sea NULL. No cierra la orden ni cambia `state`: con varios archivos, la
+    # primera descarga no significa que se los haya llevado todos, y cerrarla aquí la
+    # sacaría de la grilla dejando los demás archivos inalcanzables.
+    downloaded_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     files: Mapped[list["OrderFile"]] = relationship(
         back_populates="order",

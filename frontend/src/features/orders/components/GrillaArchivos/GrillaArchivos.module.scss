@@ -48,21 +48,30 @@
   }
 }
 
-.tile {
-  @include objetivo-tactil(110px);
+// La tarjeta ES el <li>, no el enlace: el pie de acciones (switch / botón de descarga)
+// tiene que quedar DENTRO del recuadro pero FUERA del <a>, porque un control interactivo
+// dentro de un enlace es HTML inválido.
+.celda,
+.filaAncha {
   display: flex;
   flex-direction: column;
-  height: 100%;
   box-sizing: border-box;
   padding: 13px;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: 13px;
-  text-decoration: none;
 
   &:hover {
     border-color: var(--c-accent);
   }
+}
+
+.tile {
+  @include objetivo-tactil(88px);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  text-decoration: none;
 }
 
 .tileTop {
@@ -116,16 +125,7 @@
 .tileGrupo {
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  padding: 13px;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 13px;
   text-decoration: none;
-
-  &:hover {
-    border-color: var(--c-accent);
-  }
 }
 
 .listaGrupo {

@@ -48,6 +48,30 @@ class MontoInvalidoError(Exception):
     pass
 
 
+class OrdenNoEncontradaError(Exception):
+    pass
+
+
+class NoEresElVendedorError(Exception):
+    pass
+
+
+class NoEresElCompradorError(Exception):
+    pass
+
+
+class YaDescargadaError(Exception):
+    """El comprador ya descargó: revocar la autorización a estas alturas no significa nada."""
+
+
+class NoAutorizadaError(Exception):
+    """El vendedor todavía no autorizó la descarga."""
+
+
+class ArchivoNoEncontradoError(Exception):
+    pass
+
+
 def _parsear_monto(monto_bruto: str) -> int:
     """'450.000' o '450000' -> 450000. El frontend manda el texto tal cual se escribió."""
     limpio = monto_bruto.replace(".", "").replace(",", "").replace(" ", "").strip()
@@ -132,6 +156,63 @@ def crear_orden(
 
     db.refresh(orden)
     return orden
+
+
+def _buscar_orden(db: Session, orden_id: int) -> Order:
+    orden = db.get(Order, orden_id)
+    if orden is None:
+        raise OrdenNoEncontradaError
+    return orden
+
+
+def cambiar_autorizacion(db: Session, orden_id: int, vendedor: User, autorizar: bool) -> Order:
+    """El vendedor autoriza (o revoca) la descarga: `EN_CUSTODIA` <-> `LIBERADO`.
+
+    🔴 Solo el vendedor de ESA orden. Y solo mientras el comprador no haya descargado:
+    después, revocar no devuelve el archivo — ya lo tiene — así que permitirlo sería
+    prometer un control que no existe.
+    """
+    orden = _buscar_orden(db, orden_id)
+    if orden.seller_id != vendedor.id:
+        raise NoEresElVendedorError
+    if orden.downloaded_at is not None:
+        raise YaDescargadaError
+
+    orden.state = "LIBERADO" if autorizar else "EN_CUSTODIA"
+    db.commit()
+    db.refresh(orden)
+    return orden
+
+
+def archivo_para_descarga(
+    db: Session, orden_id: int, archivo_id: int, comprador: User
+) -> tuple[OrderFile, Path]:
+    """Devuelve (fila, ruta en disco) del archivo, si el comprador puede bajarlo.
+
+    Marca `downloaded_at` en la primera descarga. NO cambia `state` ni borra nada: se
+    decidió no purgar al descargar, para que una descarga cortada a medias se pueda
+    reintentar (la purga sigue siendo la de los 30 días).
+    """
+    orden = _buscar_orden(db, orden_id)
+    if orden.buyer_id != comprador.id:
+        raise NoEresElCompradorError
+    if orden.state != "LIBERADO":
+        raise NoAutorizadaError
+
+    archivo = db.get(OrderFile, archivo_id)
+    if archivo is None or archivo.order_id != orden.id:
+        raise ArchivoNoEncontradoError
+
+    ruta = get_settings().custodia_path / str(orden.id) / archivo.stored_name
+    if not ruta.is_file():
+        raise ArchivoNoEncontradoError
+
+    if orden.downloaded_at is None:
+        orden.downloaded_at = ahora_utc()
+        db.commit()
+        db.refresh(orden)
+
+    return archivo, ruta
 
 
 def listar_ordenes(db: Session, usuario: User) -> list[Order]:
@@ -219,6 +300,7 @@ def _serializar(
         ),
         archivos=[
             OrderFileOut(
+                id=str(archivo.id),
                 nombre=archivo.original_name,
                 extension=archivo.extension,
                 bytes=archivo.size_bytes,
@@ -232,4 +314,5 @@ def _serializar(
         # Solo tiene valor en PAGO_ENVIADO, y una orden recién creada nunca está ahí.
         liberaAutomaticaEn=None,
         purgaEn=orden.purge_at,
+        descargadoEn=orden.downloaded_at,
     )

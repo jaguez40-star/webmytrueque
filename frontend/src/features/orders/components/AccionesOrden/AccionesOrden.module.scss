@@ -1,0 +1,177 @@
+@use '@/styles/mixins' as *;
+
+.bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  // Se pega al pie de la tarjeta, separado del enlace por su propio borde: deja claro que
+  // esto NO navega al detalle, es una acción.
+  margin-top: 8px;
+  padding-top: 9px;
+  border-top: 1px solid var(--c-border);
+}
+
+/* ── Switch del vendedor ── */
+
+.switch {
+  @include objetivo-tactil(44px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.etiqueta {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--c-ink);
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// El input real sigue ahí — recibe foco, teclado y lectores de pantalla — solo que la
+// pista y la bolita son lo que se ve. Un `display: none` lo sacaría del orden de tabulación.
+//
+// 🔴 Se estira ENCIMA de la pista (mismo tamaño, z-index) en vez de encogerse a 1x1: con
+// 1x1 la pista tapaba al input y un clic sobre el switch no llegaba al control — solo
+// funcionaba por rebote del <label>, y cualquier automatización o navegador que apunte al
+// elemento real se quedaba sin efecto.
+.input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 40px;
+  height: 22px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.pista {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 22px;
+  border-radius: var(--r-pill);
+  background: var(--c-border-strong);
+  transition: background 0.15s ease;
+}
+
+.bolita {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--c-surface);
+  box-shadow: 0 1px 2px rgb(22 16 32 / 25%);
+  transition: transform 0.15s ease;
+}
+
+.input:checked + .pista {
+  background: var(--c-accent);
+}
+
+.input:checked + .pista .bolita {
+  transform: translateX(18px);
+}
+
+.input:focus-visible + .pista {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.input:disabled + .pista {
+  opacity: 0.5;
+}
+
+.valor {
+  @include mono-label(10px, 0.06em);
+  color: var(--c-text-muted);
+}
+
+.input:checked ~ .valor {
+  color: var(--c-accent-text);
+}
+
+/* ── Botón del comprador ── */
+
+.boton {
+  @include objetivo-tactil(44px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 0 12px;
+  background: var(--c-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--c-accent-hover);
+  }
+
+  // Mientras el vendedor no autorice el botón está ahí pero muerto, y tiene que verse así.
+  &:disabled {
+    background: var(--c-border);
+    color: var(--c-text-muted);
+    cursor: not-allowed;
+
+    &:hover {
+      background: var(--c-border);
+    }
+  }
+}
+
+.girando {
+  animation: girar 0.9s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .girando,
+  .pista,
+  .bolita {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ── Avisos ── */
+
+.nota {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--c-text-muted);
+}
+
+.error {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--c-alert);
+}

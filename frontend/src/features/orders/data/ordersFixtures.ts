@@ -28,6 +28,7 @@ export const ORDENES_DE_EJEMPLO: Order[] = [
     rol: 'vendedor',
     contraparte: { nombre: 'Ana R.', handle: '@trq-4f7k', operaciones: 17 },
     archivos: [{
+      id: 'demo-1',
       nombre: 'entrega-final-branding.zip',
       extension: '.zip',
       bytes: 252_125_184,
@@ -52,6 +53,7 @@ export const ORDENES_DE_EJEMPLO: Order[] = [
     rol: 'comprador',
     contraparte: { nombre: 'Daniel V.', handle: '@trq-7h3n', operaciones: 63 },
     archivos: [{
+      id: 'demo-2',
       nombre: 'dataset-clientes-2026.csv',
       extension: '.csv',
       bytes: 356_515_840,
@@ -74,6 +76,7 @@ export const ORDENES_DE_EJEMPLO: Order[] = [
     rol: 'comprador',
     contraparte: { nombre: 'Carlos M.', handle: '@trq-9k2f', operaciones: 42 },
     archivos: [{
+      id: 'demo-3',
       nombre: 'masterclass-fotografia.mp4',
       extension: '.mp4',
       bytes: 1_932_735_283,
@@ -92,6 +95,7 @@ export const ORDENES_DE_EJEMPLO: Order[] = [
     rol: 'vendedor',
     contraparte: { nombre: 'Lucía P.', handle: '@trq-2m8x', operaciones: 8 },
     archivos: [{
+      id: 'demo-4',
       nombre: 'plantillas-notion-pack.zip',
       extension: '.zip',
       bytes: 18_874_368,
@@ -112,6 +116,7 @@ export const ORDENES_DE_EJEMPLO: Order[] = [
     rol: 'comprador',
     contraparte: { nombre: 'Marta S.', handle: '@trq-5t1w', operaciones: 25 },
     archivos: [{
+      id: 'demo-5',
       nombre: 'identidad-visual-cafe.ai',
       extension: '.ai',
       bytes: 94_371_840,
