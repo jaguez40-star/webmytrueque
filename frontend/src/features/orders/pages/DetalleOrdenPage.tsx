@@ -6,11 +6,8 @@ import {
   Clock,
   FileText,
   Image as ImageIcon,
-  Lock,
-  TriangleAlert,
 } from 'lucide-react'
 import { PanelShell } from '../components/PanelShell'
-import { BarraAccion } from '../components/BarraAccion'
 import { StateChip } from '../components/StateChip'
 import { HashField } from '../components/HashField'
 import { useOrder } from '../hooks/useOrders'
@@ -83,28 +80,11 @@ export function DetalleOrdenPage() {
   if (!primerArchivo) return <Navigate to="/panel" replace />
 
   return (
-    <PanelShell
-      volverA="/panel"
-      barra={
-        miTurno ? (
-          <BarraAccion>
-            <div className={styles.barraFila}>
-              <button
-                type="button"
-                className={styles.botonProblema}
-                aria-label="Reportar un problema"
-              >
-                <TriangleAlert size={20} aria-hidden="true" />
-              </button>
-              <button type="button" className={styles.botonPrincipal}>
-                <Lock size={18} aria-hidden="true" />
-                {orden.estado === 'PAGO_ENVIADO' ? 'Liberar el archivo' : 'Continuar'}
-              </button>
-            </div>
-          </BarraAccion>
-        ) : undefined
-      }
-    >
+    // Sin barra fija: los botones que vivían aquí ("Continuar"/"Liberar el archivo" y
+    // "Reportar un problema") no tenían onClick — eran maqueta a la espera de las
+    // transiciones de estado, que siguen fuera de alcance. Un botón que no hace nada es
+    // peor que no tenerlo: promete una acción que no existe.
+    <PanelShell volverA="/panel">
       <div className={styles.cabecera}>
         <StateChip estado={orden.estado} />
         <span className={styles.rol}>

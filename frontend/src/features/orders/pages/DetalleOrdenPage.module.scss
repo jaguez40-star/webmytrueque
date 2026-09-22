@@ -374,52 +374,6 @@
   margin-top: 2px;
 }
 
-/* ── Barra de acción ── */
-
-.barraFila {
-  display: flex;
-  gap: 10px;
-}
-
-.botonProblema {
-  @include objetivo-tactil(52px);
-  flex: none;
-  width: 52px;
-  border: 1px solid var(--c-border-button);
-  background: var(--c-surface);
-  color: var(--c-text-secondary);
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-
-  &:hover {
-    border-color: var(--c-alert);
-    color: var(--c-alert);
-  }
-}
-
-.botonPrincipal {
-  @include objetivo-tactil(52px);
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  background: var(--c-signal);
-  color: var(--c-on-signal-strong);
-  border: none;
-  border-radius: 13px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-
-  &:hover {
-    background: var(--c-signal-hover);
-  }
-}
-
 /* ── Pie ── */
 
 .esperaPie {
