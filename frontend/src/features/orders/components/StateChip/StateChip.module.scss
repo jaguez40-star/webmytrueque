@@ -20,10 +20,11 @@
   color: #ffffff;
 }
 
-.listo {
-  background: var(--c-surface);
-  border: 1px solid var(--c-accent);
-  color: var(--c-accent-text);
+.liberado {
+  background: var(--c-signal);
+  border: 1px solid var(--c-on-signal-strong);
+  color: var(--c-on-signal-strong);
+  font-weight: 600;
 }
 
 .exito {
