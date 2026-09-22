@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FileUp } from 'lucide-react'
 import { StateChip } from '../StateChip'
-import { estaCerrada, resumenDeArchivos, type Order } from '../../types'
+import { estaCerrada, type Order } from '../../types'
 import { formatearPeso } from '../../utils/format'
 import styles from './GrillaArchivos.module.scss'
 
@@ -43,25 +43,69 @@ export function GrillaArchivos({ ordenes }: GrillaArchivosProps) {
         </div>
       ) : (
         <ul className={styles.grilla}>
-          {enCustodia.map((orden) => (
-            <li key={orden.id}>
-              <Link to={`/panel/orden/${orden.id}`} className={styles.tile}>
-                <div className={styles.tileTop}>
-                  <span className={styles.extension}>
-                    {resumenDeArchivos(orden).extension.replace('.', '').toUpperCase()}
-                  </span>
-                  <StateChip estado={orden.estado} />
-                </div>
-                <span className={styles.nombre}>{resumenDeArchivos(orden).nombre}</span>
-                <span className={styles.meta}>
-                  {formatearPeso(resumenDeArchivos(orden).bytes)} · para{' '}
-                  {orden.contraparte.handle}
-                </span>
-              </Link>
-            </li>
-          ))}
+          {enCustodia.map((orden) =>
+            orden.archivos.length > 1 ? (
+              <TarjetaAgrupada key={orden.id} orden={orden} />
+            ) : (
+              <TarjetaArchivo key={orden.id} orden={orden} />
+            ),
+          )}
         </ul>
       )}
     </section>
+  )
+}
+
+/** Una orden con un solo archivo: el tile compacto de siempre, extensión + nombre + peso. */
+function TarjetaArchivo({ orden }: { orden: Order }) {
+  const archivo = orden.archivos[0]
+  if (!archivo) return null
+
+  return (
+    <li>
+      <Link to={`/panel/orden/${orden.id}`} className={styles.tile}>
+        <div className={styles.tileTop}>
+          <span className={styles.extension}>
+            {archivo.extension.replace('.', '').toUpperCase()}
+          </span>
+          <StateChip estado={orden.estado} />
+        </div>
+        <span className={styles.nombre}>{archivo.nombre}</span>
+        <span className={styles.meta}>
+          {formatearPeso(archivo.bytes)} · para {orden.contraparte.handle}
+        </span>
+      </Link>
+    </li>
+  )
+}
+
+/**
+ * Una orden con varios archivos: ocupa la fila entera (no un tile pequeño) y lista cada
+ * archivo por separado — nombre, tipo y peso individuales, que es justo lo que un tile de
+ * "3 archivos" sin más detalle escondía. El comprador se muestra una sola vez, al pie: es
+ * el mismo para todos los archivos de la orden.
+ */
+function TarjetaAgrupada({ orden }: { orden: Order }) {
+  return (
+    <li className={styles.filaAncha}>
+      <Link to={`/panel/orden/${orden.id}`} className={styles.tileGrupo}>
+        <div className={styles.tileTop}>
+          <span className={styles.extension}>{orden.archivos.length} ARCHIVOS</span>
+          <StateChip estado={orden.estado} />
+        </div>
+        <ul className={styles.listaGrupo}>
+          {orden.archivos.map((archivo) => (
+            <li key={archivo.hash} className={styles.filaArchivo}>
+              <span className={styles.filaArchivoExt}>
+                {archivo.extension.replace('.', '').toUpperCase()}
+              </span>
+              <span className={styles.filaArchivoNombre}>{archivo.nombre}</span>
+              <span className={styles.filaArchivoPeso}>{formatearPeso(archivo.bytes)}</span>
+            </li>
+          ))}
+        </ul>
+        <span className={styles.meta}>para {orden.contraparte.handle}</span>
+      </Link>
+    </li>
   )
 }

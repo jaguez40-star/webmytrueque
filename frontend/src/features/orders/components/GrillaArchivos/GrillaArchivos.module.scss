@@ -105,6 +105,76 @@
   overflow-wrap: anywhere;
 }
 
+/* ── Orden con varios archivos ── */
+
+// Ocupa la fila entera del grid, no una celda: la lista de archivos dentro no cabría
+// legible en el ancho de un tile de 2 columnas.
+.filaAncha {
+  grid-column: 1 / -1;
+}
+
+.tileGrupo {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 13px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 13px;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--c-accent);
+  }
+}
+
+.listaGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.filaArchivo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  background: var(--c-bg);
+  border-radius: 9px;
+}
+
+.filaArchivoExt {
+  @include mono-label(9.5px, 0.04em);
+  flex: none;
+  background: var(--c-surface-accent);
+  color: var(--c-accent-text);
+  border-radius: 6px;
+  padding: 3px 6px;
+}
+
+// `min-width: 0` para que el truncado funcione dentro del flex: sin él, un nombre largo
+// estira la fila y desborda la tarjeta en un teléfono.
+.filaArchivoNombre {
+  flex-grow: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--c-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filaArchivoPeso {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--c-text-muted);
+}
+
 /* ── Sin archivos ── */
 
 .vacia {
