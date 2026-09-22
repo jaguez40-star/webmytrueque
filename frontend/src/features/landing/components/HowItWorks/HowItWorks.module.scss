@@ -1,0 +1,526 @@
+@use '@/styles/mixins' as *;
+
+.section {
+  border-top: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+}
+
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 76px var(--content-pad) 84px;
+
+  @include bp-md {
+    padding: 44px var(--content-pad-mobile) 48px;
+  }
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.eyebrow {
+  color: var(--c-accent);
+  @include mono-label(11.5px, 0.09em);
+}
+
+.title {
+  font-size: 38px;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  margin-top: 14px;
+  max-width: 680px;
+  color: var(--c-ink);
+  text-wrap: pretty;
+
+  @include bp-md {
+    font-size: 27px;
+  }
+}
+
+.orderRef {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--c-text-muted);
+  padding-bottom: 6px;
+  white-space: nowrap;
+}
+
+.card {
+  margin-top: 44px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-card-lg);
+  padding: 44px 34px 38px;
+  box-shadow: var(--sh-flat);
+
+  @include bp-md {
+    padding: 30px 20px 26px;
+  }
+}
+
+// --- Pipeline ---
+.steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  align-items: start;
+
+  @include bp-md {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 26px 16px;
+  }
+
+  @include bp-sm {
+    grid-template-columns: 1fr;
+  }
+}
+
+.track {
+  position: absolute;
+  top: 31px; // mitad del tile de 62px
+  border-top-width: 1.5px;
+  border-top-color: var(--c-divider);
+
+  @include bp-md {
+    display: none;
+  }
+}
+
+.trackDashed {
+  left: 8%;
+  right: 25%;
+  border-top-style: dashed;
+}
+
+.trackDotted {
+  left: 75%;
+  right: 8%;
+  border-top-style: dotted;
+}
+
+.step {
+  position: relative;
+}
+
+.tileRow {
+  display: flex;
+  justify-content: center;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  border-radius: var(--r-tile);
+  position: relative;
+  z-index: 1;
+  border: 1.5px solid var(--c-border-strong);
+}
+
+.tile_soft {
+  background: var(--c-surface-accent);
+  color: var(--c-accent);
+}
+
+.tile_accent {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: #ffffff;
+
+  // El anillo pulsante es violeta (como en el prototipo), no blanco: `.pulse` hereda
+  // `currentColor` y aquí el color del tile es blanco por el icono (H9).
+  .pulse {
+    border-color: var(--c-accent);
+  }
+}
+
+.tile_plain {
+  background: var(--c-surface);
+  color: var(--c-accent);
+}
+
+.tile_signal {
+  background: var(--c-signal);
+  border-color: var(--c-signal);
+  color: var(--c-on-signal);
+}
+
+.tile_dashed {
+  background: var(--c-bg);
+  border-style: dashed;
+  border-color: var(--c-divider);
+  color: var(--c-divider-soft);
+}
+
+.pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid currentColor;
+  animation: pulseRing 2.6s ease-out infinite;
+}
+
+.chipRow {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.chip {
+  display: inline-block;
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+  border: 1px solid var(--c-border-strong);
+  @include mono-label(10px, 0.06em);
+}
+
+.chip_soft {
+  color: var(--c-accent-text);
+  background: var(--c-surface-accent);
+}
+
+.chip_accent {
+  color: #ffffff;
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.chip_plain {
+  color: var(--c-text-secondary);
+  background: var(--c-bg-alt);
+  border-color: var(--c-border);
+}
+
+.chip_signal {
+  color: var(--c-on-signal);
+  background: var(--c-signal);
+  border-color: var(--c-signal);
+}
+
+.chip_dashed {
+  color: var(--c-text-muted);
+  background: var(--c-bg);
+  border-style: dashed;
+  border-color: var(--c-border-button);
+}
+
+.stepBody {
+  margin-top: 14px;
+  text-align: center;
+}
+
+.stepNumber {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--c-text-muted);
+}
+
+.stepTitle {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 5px 0;
+  color: var(--c-ink);
+}
+
+.stepCaption {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--c-text-secondary);
+}
+
+// --- Módulo "una orden, dos personas" ---
+.peopleBlock {
+  margin-top: 36px;
+  padding-top: 30px;
+  border-top: 1px solid var(--c-border-inner);
+}
+
+.peopleHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.peopleEyebrow {
+  color: var(--c-accent);
+  @include mono-label(10.5px, 0.09em);
+}
+
+.peopleMeta {
+  color: var(--c-text-muted);
+  @include mono-label(9.5px, 0.07em);
+}
+
+.people {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 20px;
+  align-items: stretch;
+
+  @include bp-md {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.personCard {
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  background: var(--c-bg-alt);
+  display: flex;
+
+  @include bp-md {
+    flex-direction: column;
+  }
+}
+
+.personCardMirror {
+  @include bp-md {
+    flex-direction: column-reverse;
+  }
+}
+
+.photo {
+  position: relative;
+  width: 148px;
+  flex: none;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include bp-md {
+    width: 100%;
+    height: 190px;
+  }
+}
+
+.personInfo {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.personInfoRight {
+  text-align: right;
+  margin-left: auto;
+
+  .personChips {
+    justify-content: flex-end;
+  }
+
+  @include bp-md {
+    text-align: left;
+    margin-left: 0;
+
+    .personChips {
+      justify-content: flex-start;
+    }
+  }
+}
+
+.personRole {
+  color: var(--c-accent-mid);
+  @include mono-label(9.5px, 0.07em);
+}
+
+.personName {
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 6px;
+  color: var(--c-ink);
+  letter-spacing: -0.02em;
+}
+
+.personHandle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--c-text-muted);
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
+.personChips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.chipSignal {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--c-on-signal);
+  background: var(--c-signal);
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+
+.chipAccent {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--c-accent-text);
+  background: var(--c-surface-accent);
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+
+.chipNote {
+  font-size: 12px;
+  color: var(--c-text-secondary);
+}
+
+.personCaption {
+  font-size: 12.5px;
+  color: var(--c-text-secondary);
+  margin-top: 12px;
+  line-height: 1.45;
+}
+
+// --- Bloque de custodia (oscuro, centro) ---
+.custody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  width: 168px;
+  background: var(--c-ink);
+  border-radius: var(--r-card);
+  padding: 22px 16px;
+
+  @include bp-md {
+    width: 100%;
+    padding: 26px 16px;
+  }
+}
+
+.custodyLogo {
+  position: absolute;
+  top: 10px;
+  left: 11px;
+}
+
+.custodyLabel {
+  color: var(--c-signal);
+  text-align: center;
+  margin-top: 10px;
+  @include mono-label(9.5px, 0.08em);
+}
+
+.lock {
+  width: 72px;
+  height: 60px;
+  border-radius: 14px;
+  background: var(--c-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: var(--c-accent-light);
+
+  .pulse {
+    animation-duration: 2.8s;
+  }
+}
+
+.custodyDots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  span {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+}
+
+.dotSignal {
+  background: var(--c-signal);
+}
+
+.dotAccent {
+  background: var(--c-accent-light);
+}
+
+.dotDark {
+  background: var(--c-on-dark-border-strong);
+}
+
+.custodyCaption {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--c-on-dark-secondary);
+  text-align: center;
+}
+
+// --- Franja del dinero ---
+.moneyStrip {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--c-bg-alt);
+  border: 1px dashed var(--c-border-strong);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+.moneyBadge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px dashed var(--c-border-button);
+  border-radius: var(--r-button);
+  padding: 7px 11px;
+  background: var(--c-surface);
+  flex: none;
+}
+
+.moneyBadgeText {
+  color: var(--c-divider-soft);
+  @include mono-label(10px, 0.06em);
+}
+
+.strike {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 50%;
+  height: 2px;
+  background: var(--c-alert);
+  transform: rotate(-8deg);
+  border-radius: 2px;
+}
+
+.moneyText {
+  font-size: 13.5px;
+  color: var(--c-text-secondary);
+  line-height: 1.5;
+
+  strong {
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+}

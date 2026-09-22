@@ -1,0 +1,44 @@
+[project]
+name = "trueque-backend"
+version = "0.1.0"
+description = "Backend de MyTrueque.com — FastAPI + SQLAlchemy + SQLite"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.53.0",
+    "sqlalchemy>=2.0.54",
+    "alembic>=1.20.0",
+    "pydantic[email]>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "structlog>=26.1.0",
+    "itsdangerous>=2.2.0",
+    "bcrypt>=5.0.0",
+    "python-multipart>=0.0.32",
+    "httpx2>=2.13.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.8",
+    "mypy>=2.3.1",
+    "pytest>=9.1.1",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# Los archivos que genera `alembic init` (env.py, script.py.mako, las migraciones) usan
+# `Union[...]`, imports fuera del tope y bloques sin ordenar: producen 10 errores de lint
+# que no son código nuestro y que se volverían a generar en cada migración nueva (H7).
+extend-exclude = ["alembic"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

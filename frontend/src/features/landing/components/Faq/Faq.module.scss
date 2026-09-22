@@ -1,0 +1,64 @@
+@use '@/styles/mixins' as *;
+
+.section {
+  background: var(--c-ink);
+  color: var(--c-on-dark);
+}
+
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 76px var(--content-pad);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: center;
+
+  @include bp-md {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    padding: 44px var(--content-pad-mobile) 48px;
+  }
+}
+
+.title {
+  font-size: 34px;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  text-wrap: pretty;
+
+  @include bp-md {
+    font-size: 27px;
+  }
+}
+
+.paragraph {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--c-on-dark-secondary);
+  margin-top: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.items {
+  display: grid;
+  gap: 20px;
+}
+
+.question {
+  font-size: 15.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.answer {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--c-on-dark-secondary);
+}

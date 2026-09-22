@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ececeA; color: #14171a; font-family: "Instrument Sans", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #14171a; text-decoration: none; }
+  a:hover { color: oklch(0.55 0.10 195); }
+</style>
+</helmet>
+
+<section style="padding: 48px 48px 80px;">
+  <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px;">
+    <h1 style="font-size: 26px; font-weight: 700; letter-spacing: -0.03em; margin: 0;">Turno 1 · Identidad y paleta</h1>
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.07em; color: #6b7276;">CUATRO DIRECCIONES · ELIGE UNA POR SU ID</span>
+  </div>
+  <p style="font-size: 15px; line-height: 1.6; color: #4b5155; max-width: 720px; margin: 0 0 40px;">Cada dirección define el color que gobierna toda la página: acento de marca, estados y CTA. La tipografía se mantiene (Instrument Sans + IBM Plex Mono) para no mover lo que ya funciona.</p>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start;">
+
+    <div id="1a" style="width: 470px; background: #ffffff; border: 1px solid #dcdcd4; border-radius: 18px; overflow: hidden;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eeeee8;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; background: #14171a; color: #f6f6f3; padding: 4px 9px; border-radius: 6px;">1a</span>
+        <span style="font-size: 13.5px; font-weight: 600;">Intercambio · Jade</span>
+      </div>
+
+      <div style="padding: 44px 22px; display: flex; flex-direction: column; align-items: center; gap: 34px; background: #fbfbf9;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span style="position: relative; width: 42px; height: 42px; display: block;">
+            <span style="position: absolute; left: 2px; top: 9px; width: 15px; height: 15px; border-top: 3.5px solid oklch(0.55 0.12 165); border-right: 3.5px solid oklch(0.55 0.12 165); transform: rotate(45deg); display: block;"></span>
+            <span style="position: absolute; right: 2px; bottom: 9px; width: 15px; height: 15px; border-top: 3.5px solid #14211c; border-right: 3.5px solid #14211c; transform: rotate(-135deg); display: block;"></span>
+          </span>
+          <span style="font-size: 30px; font-weight: 700; letter-spacing: -0.035em; color: #14211c;">MyTrueque</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <div style="background: #14211c; border-radius: 12px; padding: 16px 22px; display: flex; align-items: center; gap: 10px;">
+            <span style="position: relative; width: 26px; height: 26px; display: block;">
+              <span style="position: absolute; left: 1px; top: 6px; width: 9px; height: 9px; border-top: 2.5px solid oklch(0.72 0.14 165); border-right: 2.5px solid oklch(0.72 0.14 165); transform: rotate(45deg); display: block;"></span>
+              <span style="position: absolute; right: 1px; bottom: 6px; width: 9px; height: 9px; border-top: 2.5px solid #f2f6f4; border-right: 2.5px solid #f2f6f4; transform: rotate(-135deg); display: block;"></span>
+            </span>
+            <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: #f2f6f4;">MyTrueque</span>
+          </div>
+          <span style="width: 40px; height: 40px; border-radius: 9px; background: oklch(0.55 0.12 165); display: flex; align-items: center; justify-content: center;">
+            <span style="position: relative; width: 22px; height: 22px; display: block;">
+              <span style="position: absolute; left: 1px; top: 5px; width: 8px; height: 8px; border-top: 2.5px solid #ffffff; border-right: 2.5px solid #ffffff; transform: rotate(45deg); display: block;"></span>
+              <span style="position: absolute; right: 1px; bottom: 5px; width: 8px; height: 8px; border-top: 2.5px solid #ffffff; border-right: 2.5px solid #ffffff; transform: rotate(-135deg); display: block;"></span>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #eeeee8;">
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.55 0.12 165);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">ACENTO</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #14211c;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">TINTA</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.94 0.03 165);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">SUAVE</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #f7f8f6; border: 1px solid #e3e6e3;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">FONDO</span></div>
+      </div>
+
+      <div style="padding: 20px 22px; border-top: 1px solid #eeeee8; background: #f7f8f6;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #e3e6e3;">
+          <span style="display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: #14211c;"><span style="width: 10px; height: 10px; border-radius: 50%; background: oklch(0.55 0.12 165);"></span>MyTrueque</span>
+          <span style="display: flex; gap: 8px;">
+            <span style="font-size: 11.5px; border: 1px solid #cdd4d0; border-radius: 6px; padding: 5px 10px; color: #14211c;">Entrar</span>
+            <span style="font-size: 11.5px; border-radius: 6px; padding: 5px 10px; background: oklch(0.55 0.12 165); color: #ffffff;">Crear cuenta</span>
+          </span>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: oklch(0.94 0.03 165); color: oklch(0.42 0.10 165);">LIBERADO</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: #14211c; color: #f2f6f4;">EN CUSTODIA</span>
+        </div>
+        <p style="font-size: 12.5px; line-height: 1.5; color: #4b5155; margin: 14px 0 0;">Verde de confianza sin caer en el cliché fintech. Los chevrons opuestos leen como trueque a cualquier tamaño.</p>
+      </div>
+    </div>
+
+    <div id="1b" style="width: 470px; background: #ffffff; border: 1px solid #dcdcd4; border-radius: 18px; overflow: hidden;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eeeee8;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; background: #14171a; color: #f6f6f3; padding: 4px 9px; border-radius: 6px;">1b</span>
+        <span style="font-size: 13.5px; font-weight: 600;">Custodia · Cobalto</span>
+      </div>
+
+      <div style="padding: 44px 22px; display: flex; flex-direction: column; align-items: center; gap: 34px; background: #fbfbfd;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span style="position: relative; width: 46px; height: 30px; display: block;">
+            <span style="position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: oklch(0.52 0.16 255); display: block;"></span>
+            <span style="position: absolute; right: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; border: 3.5px solid #101426; display: block;"></span>
+          </span>
+          <span style="font-size: 30px; font-weight: 700; letter-spacing: -0.035em; color: #101426;">MyTrueque</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <div style="background: #101426; border-radius: 12px; padding: 16px 22px; display: flex; align-items: center; gap: 10px;">
+            <span style="position: relative; width: 30px; height: 20px; display: block;">
+              <span style="position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; background: oklch(0.65 0.16 255); display: block;"></span>
+              <span style="position: absolute; right: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; border: 2.5px solid #eef1f8; display: block;"></span>
+            </span>
+            <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: #eef1f8;">MyTrueque</span>
+          </div>
+          <span style="width: 40px; height: 40px; border-radius: 9px; background: oklch(0.52 0.16 255); display: flex; align-items: center; justify-content: center;">
+            <span style="position: relative; width: 26px; height: 17px; display: block;">
+              <span style="position: absolute; left: 0; top: 0; width: 17px; height: 17px; border-radius: 50%; background: #ffffff; display: block;"></span>
+              <span style="position: absolute; right: 0; top: 0; width: 17px; height: 17px; border-radius: 50%; border: 2.5px solid #ffffff; display: block;"></span>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #eeeee8;">
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.52 0.16 255);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">ACENTO</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #101426;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">TINTA</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.93 0.04 255);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">SUAVE</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #f6f7fb; border: 1px solid #e2e5ee;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">FONDO</span></div>
+      </div>
+
+      <div style="padding: 20px 22px; border-top: 1px solid #eeeee8; background: #f6f7fb;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #e2e5ee;">
+          <span style="display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: #101426;"><span style="width: 10px; height: 10px; border-radius: 50%; background: oklch(0.52 0.16 255);"></span>MyTrueque</span>
+          <span style="display: flex; gap: 8px;">
+            <span style="font-size: 11.5px; border: 1px solid #ccd1e0; border-radius: 6px; padding: 5px 10px; color: #101426;">Entrar</span>
+            <span style="font-size: 11.5px; border-radius: 6px; padding: 5px 10px; background: oklch(0.52 0.16 255); color: #ffffff;">Crear cuenta</span>
+          </span>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: oklch(0.93 0.04 255); color: oklch(0.40 0.14 255);">LIBERADO</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: #101426; color: #eef1f8;">EN CUSTODIA</span>
+        </div>
+        <p style="font-size: 12.5px; line-height: 1.5; color: #4b5155; margin: 14px 0 0;">Dos círculos: uno lleno (custodia) y uno abierto (entrega). El azul profundo es el más sobrio y "software serio" de los cuatro.</p>
+      </div>
+    </div>
+
+    <div id="1c" style="width: 470px; background: #ffffff; border: 1px solid #dcdcd4; border-radius: 18px; overflow: hidden;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eeeee8;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; background: #14171a; color: #f6f6f3; padding: 4px 9px; border-radius: 6px;">1c</span>
+        <span style="font-size: 13.5px; font-weight: 600;">Caja fuerte · Ámbar</span>
+      </div>
+
+      <div style="padding: 44px 22px; display: flex; flex-direction: column; align-items: center; gap: 34px; background: #fcfaf7;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <span style="width: 34px; height: 34px; background: oklch(0.68 0.15 65); transform: rotate(45deg); border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+            <span style="width: 12px; height: 12px; background: #1a140c; border-radius: 2px; display: block;"></span>
+          </span>
+          <span style="font-size: 30px; font-weight: 700; letter-spacing: -0.035em; color: #1a140c;">MyTrueque</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <div style="background: #1a140c; border-radius: 12px; padding: 16px 22px; display: flex; align-items: center; gap: 12px;">
+            <span style="width: 22px; height: 22px; background: oklch(0.75 0.15 65); transform: rotate(45deg); border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+              <span style="width: 8px; height: 8px; background: #1a140c; border-radius: 1.5px; display: block;"></span>
+            </span>
+            <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: #faf6f0;">MyTrueque</span>
+          </div>
+          <span style="width: 40px; height: 40px; border-radius: 9px; background: oklch(0.68 0.15 65); display: flex; align-items: center; justify-content: center;">
+            <span style="width: 18px; height: 18px; background: transparent; border: 2.5px solid #1a140c; transform: rotate(45deg); border-radius: 3px; display: block;"></span>
+          </span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #eeeee8;">
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.68 0.15 65);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">ACENTO</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #1a140c;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">TINTA</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.95 0.04 65);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">SUAVE</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #faf8f4; border: 1px solid #e9e4dc;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">FONDO</span></div>
+      </div>
+
+      <div style="padding: 20px 22px; border-top: 1px solid #eeeee8; background: #faf8f4;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #e9e4dc;">
+          <span style="display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: #1a140c;"><span style="width: 10px; height: 10px; background: oklch(0.68 0.15 65); transform: rotate(45deg); border-radius: 2px;"></span>MyTrueque</span>
+          <span style="display: flex; gap: 8px;">
+            <span style="font-size: 11.5px; border: 1px solid #ded7cb; border-radius: 6px; padding: 5px 10px; color: #1a140c;">Entrar</span>
+            <span style="font-size: 11.5px; border-radius: 6px; padding: 5px 10px; background: #1a140c; color: #faf6f0;">Crear cuenta</span>
+          </span>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: oklch(0.95 0.04 65); color: oklch(0.45 0.11 65);">LIBERADO</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: #1a140c; color: #faf6f0;">EN CUSTODIA</span>
+        </div>
+        <p style="font-size: 12.5px; line-height: 1.5; color: #4b5155; margin: 14px 0 0;">El diamante es la caja fuerte y el ámbar da calor sin perder seriedad. La más cálida y la que menos se parece a la competencia.</p>
+      </div>
+    </div>
+
+    <div id="1d" style="width: 470px; background: #ffffff; border: 1px solid #dcdcd4; border-radius: 18px; overflow: hidden;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eeeee8;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; background: #14171a; color: #f6f6f3; padding: 4px 9px; border-radius: 6px;">1d</span>
+        <span style="font-size: 13.5px; font-weight: 600;">Transferencia · Violeta + lima</span>
+      </div>
+
+      <div style="padding: 44px 22px; display: flex; flex-direction: column; align-items: center; gap: 34px; background: #fbfafd;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <span style="display: flex; align-items: center; gap: 6px;">
+            <span style="width: 12px; height: 34px; background: oklch(0.50 0.16 300); transform: skewX(-18deg); border-radius: 3px; display: block;"></span>
+            <span style="width: 12px; height: 34px; background: oklch(0.85 0.16 120); transform: skewX(-18deg); border-radius: 3px; display: block;"></span>
+          </span>
+          <span style="font-size: 30px; font-weight: 700; letter-spacing: -0.035em; color: #161020;">MyTrueque</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <div style="background: #161020; border-radius: 12px; padding: 16px 22px; display: flex; align-items: center; gap: 12px;">
+            <span style="display: flex; align-items: center; gap: 4px;">
+              <span style="width: 8px; height: 22px; background: oklch(0.65 0.18 300); transform: skewX(-18deg); border-radius: 2px; display: block;"></span>
+              <span style="width: 8px; height: 22px; background: oklch(0.85 0.16 120); transform: skewX(-18deg); border-radius: 2px; display: block;"></span>
+            </span>
+            <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: #f3f0f8;">MyTrueque</span>
+          </div>
+          <span style="width: 40px; height: 40px; border-radius: 9px; background: oklch(0.50 0.16 300); display: flex; align-items: center; justify-content: center; gap: 3px;">
+            <span style="width: 7px; height: 20px; background: #ffffff; transform: skewX(-18deg); border-radius: 2px; display: block;"></span>
+            <span style="width: 7px; height: 20px; background: oklch(0.85 0.16 120); transform: skewX(-18deg); border-radius: 2px; display: block;"></span>
+          </span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #eeeee8;">
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.50 0.16 300);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">ACENTO</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: oklch(0.85 0.16 120);"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">SEÑAL</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #161020;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">TINTA</span></div>
+        <div style="background: #ffffff; padding: 12px;"><span style="display: block; height: 34px; border-radius: 7px; background: #f8f7fb; border: 1px solid #e6e3ee;"></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7276; display: block; margin-top: 7px;">FONDO</span></div>
+      </div>
+
+      <div style="padding: 20px 22px; border-top: 1px solid #eeeee8; background: #f8f7fb;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #e6e3ee;">
+          <span style="display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: #161020;"><span style="width: 6px; height: 14px; background: oklch(0.50 0.16 300); transform: skewX(-18deg); border-radius: 2px;"></span>MyTrueque</span>
+          <span style="display: flex; gap: 8px;">
+            <span style="font-size: 11.5px; border: 1px solid #d6d1e2; border-radius: 6px; padding: 5px 10px; color: #161020;">Entrar</span>
+            <span style="font-size: 11.5px; border-radius: 6px; padding: 5px 10px; background: oklch(0.50 0.16 300); color: #ffffff;">Crear cuenta</span>
+          </span>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: oklch(0.85 0.16 120); color: #1d2a0a;">LIBERADO</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 999px; background: #161020; color: #f3f0f8;">EN CUSTODIA</span>
+        </div>
+        <p style="font-size: 12.5px; line-height: 1.5; color: #4b5155; margin: 14px 0 0;">Dos barras inclinadas = datos en tránsito. La lima solo para "liberado/descargado": máximo contraste en el momento clave. La más joven y enérgica.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

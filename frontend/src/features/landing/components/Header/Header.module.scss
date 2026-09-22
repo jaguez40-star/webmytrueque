@@ -1,0 +1,155 @@
+@use '@/styles/mixins' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(245, 244, 249, 0.88);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.bar {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 18px var(--content-pad);
+  display: flex;
+  align-items: center;
+  gap: 40px;
+
+  @include bp-lg {
+    gap: 16px;
+  }
+
+  @include bp-md {
+    padding: 14px var(--content-pad-mobile);
+    gap: 14px;
+  }
+}
+
+.nav {
+  display: flex;
+  gap: 28px;
+  font-size: 14.5px;
+  margin-left: auto;
+
+  @include bp-lg {
+    display: none;
+  }
+}
+
+.navLink {
+  color: var(--c-text-secondary);
+
+  &:hover {
+    color: var(--c-accent);
+  }
+}
+
+.burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--c-border-button);
+  background: var(--c-surface);
+  border-radius: 10px;
+  cursor: pointer;
+  flex: none;
+
+  @include bp-lg {
+    display: flex;
+    margin-left: auto;
+  }
+}
+
+.burgerBar {
+  display: block;
+  width: 17px;
+  height: 2px;
+  background: var(--c-ink);
+  border-radius: 2px;
+}
+
+.burgerBarAccent {
+  background: var(--c-accent);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  // El prototipo no define un breakpoint para este contenedor: por debajo de ~505px
+  // el wordmark (215px) + hamburguesa (44px) + "Entrar"/"Crear cuenta" (nowrap) ya no
+  // caben y producen scroll horizontal (hasta 189px de overflow verificado a 320px).
+  // Se oculta el par completo en `bp-sm` — la hamburguesa ya es el patrón de nav
+  // compacta que el propio diseño establece a 1130px, y el panel de auth queda
+  // inmediatamente debajo, en el Hero.
+  @include bp-sm {
+    display: none;
+  }
+}
+
+.menuPanel {
+  border-top: 1px solid var(--c-border);
+  background: var(--c-surface);
+}
+
+.menuList {
+  display: grid;
+  padding: 8px var(--content-pad-mobile) 14px;
+}
+
+.menuLink {
+  padding: 13px 4px;
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--c-ink);
+  border-bottom: 1px solid var(--c-border-inner);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// Sesión activa: @usuario + botón de salir, en lugar de Entrar/Crear cuenta.
+.userHandle {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--c-accent-text);
+  background: var(--c-surface-accent);
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--c-border-button);
+  background: var(--c-surface);
+  color: var(--c-text-secondary);
+  padding: 8px 14px;
+  border-radius: var(--r-button);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--c-alert);
+    color: var(--c-alert);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}

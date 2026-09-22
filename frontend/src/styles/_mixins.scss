@@ -1,0 +1,29 @@
+// Breakpoints del diseño. Se usan SIEMPRE con @include, nunca con @media suelto,
+// para que un cambio de breakpoint se haga en un único sitio.
+
+@mixin bp-lg {
+  @media (max-width: 1130px) {
+    @content;
+  }
+}
+
+@mixin bp-md {
+  @media (max-width: 880px) {
+    @content;
+  }
+}
+
+@mixin bp-sm {
+  @media (max-width: 560px) {
+    @content;
+  }
+}
+
+// Etiqueta monoespaciada en mayúsculas: patrón repetido en todo el diseño
+// (eyebrows, chips de estado, etiquetas de metadata).
+@mixin mono-label($size: 11px, $tracking: 0.07em) {
+  font-family: var(--font-mono);
+  font-size: $size;
+  letter-spacing: $tracking;
+  text-transform: uppercase;
+}

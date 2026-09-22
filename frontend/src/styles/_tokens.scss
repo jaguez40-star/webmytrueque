@@ -1,0 +1,72 @@
+// Tokens de marca MyTrueque.shop — extraídos del prototipo aprobado (v5).
+// Se exponen como variables CSS para poder consumirlos desde cualquier módulo
+// y, más adelante, permitir temas sin recompilar.
+
+:root {
+  // --- Acento (violeta) ---
+  --c-accent: oklch(0.5 0.16 300);
+  --c-accent-hover: oklch(0.43 0.16 300);
+  --c-accent-light: oklch(0.65 0.18 300);
+  --c-accent-text: oklch(0.42 0.16 300);
+  --c-accent-mid: oklch(0.45 0.16 300);
+
+  // --- Señal (lima) — SOLO éxito ---
+  --c-signal: oklch(0.85 0.16 120);
+  --c-signal-hover: oklch(0.9 0.16 120);
+  --c-on-signal: #29380a;
+  --c-on-signal-strong: #1d2a0a;
+
+  // --- Alerta (única línea roja del diseño) ---
+  --c-alert: oklch(0.58 0.2 25);
+
+  // --- Texto ---
+  --c-ink: #161020;
+  --c-text-secondary: #58526b;
+  --c-text-muted: #6f6885;
+  --c-text-placeholder: #8b84a3;
+
+  // --- Fondos y superficies ---
+  --c-bg: #f5f4f9;
+  --c-bg-alt: #faf9fd;
+  --c-surface: #ffffff;
+  --c-surface-accent: #f5f2fc;
+  --c-tabs-bg: #f2f0f8;
+
+  // --- Bordes y divisores ---
+  --c-border: #e6e3ee;
+  --c-border-strong: #dcd7ea;
+  --c-border-input: #ddd8e9;
+  --c-border-button: #d6d1e2;
+  --c-border-inner: #f0eef7;
+  --c-divider: #cec7e2;
+  --c-divider-soft: #b6afc9;
+
+  // --- Sobre fondo oscuro ---
+  --c-on-dark: #f3f0f8;
+  --c-on-dark-secondary: #a9a2bd;
+  --c-on-dark-border: #2b2440;
+  --c-on-dark-border-strong: #3b3350;
+
+  // --- Tipografía ---
+  --font-sans: 'Instrument Sans', Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  // --- Layout ---
+  --content-max: 1180px;
+  --content-pad: 32px;
+  --content-pad-mobile: 18px;
+
+  // --- Radios ---
+  --r-button: 8px;
+  --r-input: 9px;
+  --r-card: 16px;
+  --r-card-lg: 18px;
+  --r-tile: 16px;
+  --r-pill: 999px;
+
+  // --- Sombras ---
+  --sh-auth: 0 1px 2px rgba(22, 16, 32, 0.04), 0 22px 44px -28px rgba(22, 16, 32, 0.28);
+  --sh-file: 0 1px 2px rgba(22, 16, 32, 0.04), 0 26px 52px -34px rgba(22, 16, 32, 0.32);
+  --sh-flat: 0 1px 2px rgba(22, 16, 32, 0.03);
+  --sh-tab: 0 1px 3px rgba(22, 16, 32, 0.12);
+}

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f6f3; color: #14171a; font-family: "Instrument Sans", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #14171a; text-decoration: none; }
+  a:hover { color: oklch(0.55 0.10 195); }
+  input, button { font-family: inherit; }
+  input:focus { outline: none; border-color: #14171a !important; }
+  ::placeholder { color: #9aa0a6; }
+  @keyframes pulseRing { 0% { transform: scale(1); opacity: .45; } 100% { transform: scale(2.1); opacity: 0; } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: #f6f6f3;">
+
+  <header style="position: sticky; top: 0; z-index: 20; background: rgba(246,246,243,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid #e3e3dd;">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 18px 32px; display: flex; align-items: center; gap: 40px;">
+      <a href="#top" style="display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em;">
+        <span style="width: 12px; height: 12px; border-radius: 50%; background: oklch(0.55 0.10 195); display: inline-block;"></span>
+        MyTrueque<span style="color: #9aa0a6; font-weight: 500;">.com</span>
+      </a>
+      <nav style="display: flex; gap: 28px; font-size: 14.5px; color: #4b5155; margin-left: auto;">
+        <a href="#como-funciona" style="color: #4b5155;">Cómo funciona</a>
+        <a href="#inspeccion" style="color: #4b5155;">Inspección</a>
+        <a href="#garantias" style="color: #4b5155;">Garantías</a>
+        <a href="#preguntas" style="color: #4b5155;">Preguntas</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button onClick="{{ goLogin }}" style="border: 1px solid #d3d3cb; background: transparent; color: #14171a; padding: 9px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="border-color: #14171a;">Entrar</button>
+        <button onClick="{{ goRegister }}" style="border: 1px solid #14171a; background: #14171a; color: #f6f6f3; padding: 9px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #2b3034;">Crear cuenta</button>
+      </div>
+    </div>
+  </header>
+
+  <section id="top" style="max-width: 1180px; margin: 0 auto; padding: 84px 32px 72px; display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 72px; align-items: start;">
+    <div>
+      <div style="display: inline-flex; align-items: center; gap: 9px; border: 1px solid #d3d3cb; border-radius: 999px; padding: 6px 13px 6px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: #4b5155; background: #fbfbf9;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: oklch(0.62 0.13 150);"></span>
+        Custodia cifrada · Purga al descargar
+      </div>
+      <h1 style="font-size: 60px; line-height: 1.02; letter-spacing: -0.035em; font-weight: 700; margin: 26px 0 0; text-wrap: pretty;">Revisa el archivo antes de pagarlo.</h1>
+      <p style="font-size: 19px; line-height: 1.55; color: #4b5155; max-width: 500px; margin: 22px 0 0; text-wrap: pretty;">El vendedor sube el archivo a custodia y comparte su ficha técnica: extensión, peso, metadata y hash. Tú verificas todo, pagas por fuera —el dinero nunca pasa por aquí— y descargas cuando él libera. Al descargarse, el archivo se borra de nuestros servidores.</p>
+
+      <div style="display: grid; gap: 14px; margin-top: 34px;">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <span style="width: 8px; height: 8px; background: #14171a; margin-top: 8px; flex: none;"></span>
+          <span style="font-size: 15.5px; color: #14171a;"><strong style="font-weight: 600;">Compras con la ficha en la mano.</strong> <span style="color: #4b5155;">Nada de "confía en mí": ves qué es antes de transferir.</span></span>
+        </div>
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <span style="width: 8px; height: 8px; background: #14171a; margin-top: 8px; flex: none;"></span>
+          <span style="font-size: 15.5px; color: #14171a;"><strong style="font-weight: 600;">Nadie espera al otro.</strong> <span style="color: #4b5155;">El archivo está en custodia: descargas cuando quieras.</span></span>
+        </div>
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <span style="width: 8px; height: 8px; background: #14171a; margin-top: 8px; flex: none;"></span>
+          <span style="font-size: 15.5px; color: #14171a;"><strong style="font-weight: 600;">Si pagaste, no te dejan colgado.</strong> <span style="color: #4b5155;">Con comprobante y 24 h de silencio, liberamos nosotros.</span></span>
+        </div>
+      </div>
+
+      <sc-if value="{{ showTrustStrip }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; gap: 44px; margin-top: 46px; padding-top: 26px; border-top: 1px solid #e3e3dd;">
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 500; letter-spacing: -0.02em;">0</div>
+            <div style="font-size: 12.5px; color: #6b7276; margin-top: 4px;">dinero en nuestras manos</div>
+          </div>
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 500; letter-spacing: -0.02em;">SHA-256</div>
+            <div style="font-size: 12.5px; color: #6b7276; margin-top: 4px;">sello de integridad</div>
+          </div>
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 500; letter-spacing: -0.02em;">24 h</div>
+            <div style="font-size: 12.5px; color: #6b7276; margin-top: 4px;">liberación por tiempo</div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div id="acceso" style="background: #ffffff; border: 1px solid #e3e3dd; border-radius: 14px; padding: 30px; box-shadow: 0 1px 2px rgba(20,23,26,0.04), 0 18px 40px -28px rgba(20,23,26,0.28);">
+      <div style="display: flex; gap: 4px; background: #f1f1ec; border-radius: 9px; padding: 4px;">
+        <button onClick="{{ goLogin }}" style="{{ loginTabStyle }}">Entrar</button>
+        <button onClick="{{ goRegister }}" style="{{ registerTabStyle }}">Crear cuenta</button>
+      </div>
+
+      <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top: 26px;">
+          <h2 style="font-size: 21px; font-weight: 600; letter-spacing: -0.02em; margin: 0;">Bienvenido de vuelta</h2>
+          <p style="font-size: 14px; color: #6b7276; margin: 7px 0 0;">Entra para ver tus órdenes, liberaciones y descargas.</p>
+          <div style="display: grid; gap: 14px; margin-top: 22px;">
+            <label style="display: grid; gap: 6px;">
+              <span style="font-size: 12.5px; font-weight: 500; color: #4b5155;">Correo</span>
+              <input type="email" placeholder="tu@correo.com" style="border: 1px solid #dcdcd4; border-radius: 9px; padding: 11px 13px; font-size: 15px; background: #fbfbf9; color: #14171a;" />
+            </label>
+            <label style="display: grid; gap: 6px;">
+              <span style="font-size: 12.5px; font-weight: 500; color: #4b5155; display: flex; justify-content: space-between;">Contraseña <a href="#preguntas" style="font-weight: 400; color: #6b7276; font-size: 12.5px;">¿La olvidaste?</a></span>
+              <input type="password" placeholder="••••••••" style="border: 1px solid #dcdcd4; border-radius: 9px; padding: 11px 13px; font-size: 15px; background: #fbfbf9; color: #14171a;" />
+            </label>
+            <button style="margin-top: 4px; border: none; background: #14171a; color: #f6f6f3; padding: 13px; border-radius: 9px; font-size: 15px; font-weight: 500; cursor: pointer;" style-hover="background: #2b3034;">Entrar</button>
+          </div>
+          <p style="font-size: 13px; color: #6b7276; text-align: center; margin: 18px 0 0;">¿Primera vez aquí? <a href="#acceso" onClick="{{ goRegister }}" style="color: oklch(0.5 0.10 195); font-weight: 500;">Crea tu cuenta</a></p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top: 26px;">
+          <h2 style="font-size: 21px; font-weight: 600; letter-spacing: -0.02em; margin: 0;">Crea tu cuenta</h2>
+          <p style="font-size: 14px; color: #6b7276; margin: 7px 0 0;">Sube tu primer archivo o compra uno hoy mismo.</p>
+          <div style="display: grid; gap: 14px; margin-top: 22px;">
+            <label style="display: grid; gap: 6px;">
+              <span style="font-size: 12.5px; font-weight: 500; color: #4b5155;">Nombre</span>
+              <input type="text" placeholder="Ana Ríos" style="border: 1px solid #dcdcd4; border-radius: 9px; padding: 11px 13px; font-size: 15px; background: #fbfbf9; color: #14171a;" />
+            </label>
+            <label style="display: grid; gap: 6px;">
+              <span style="font-size: 12.5px; font-weight: 500; color: #4b5155;">Correo</span>
+              <input type="email" placeholder="tu@correo.com" style="border: 1px solid #dcdcd4; border-radius: 9px; padding: 11px 13px; font-size: 15px; background: #fbfbf9; color: #14171a;" />
+            </label>
+            <label style="display: grid; gap: 6px;">
+              <span style="font-size: 12.5px; font-weight: 500; color: #4b5155;">Contraseña</span>
+              <input type="password" placeholder="Mínimo 8 caracteres" style="border: 1px solid #dcdcd4; border-radius: 9px; padding: 11px 13px; font-size: 15px; background: #fbfbf9; color: #14171a;" />
+            </label>
+            <label style="display: flex; align-items: flex-start; gap: 9px; font-size: 12.5px; color: #6b7276; line-height: 1.5;">
+              <input type="checkbox" style="margin-top: 2px; accent-color: #14171a;" />
+              <span>Acepto los <a href="#preguntas" style="color: #4b5155; text-decoration: underline;">términos</a> y las <a href="#garantias" style="color: #4b5155; text-decoration: underline;">reglas de custodia</a>.</span>
+            </label>
+            <button style="margin-top: 4px; border: none; background: #14171a; color: #f6f6f3; padding: 13px; border-radius: 9px; font-size: 15px; font-weight: 500; cursor: pointer;" style-hover="background: #2b3034;">Crear cuenta</button>
+          </div>
+          <p style="font-size: 13px; color: #6b7276; text-align: center; margin: 18px 0 0;">¿Ya tienes cuenta? <a href="#acceso" onClick="{{ goLogin }}" style="color: oklch(0.5 0.10 195); font-weight: 500;">Entrar</a></p>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <section id="como-funciona" style="border-top: 1px solid #e3e3dd; background: #fbfbf9;">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 76px 32px 84px;">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;">
+        <div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6b7276;">Cómo funciona</div>
+          <h2 style="font-size: 38px; letter-spacing: -0.03em; font-weight: 700; margin: 14px 0 0; max-width: 680px; text-wrap: pretty;">Seis estados. El último es el borrado.</h2>
+        </div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #9aa0a6; letter-spacing: 0.06em; padding-bottom: 6px; white-space: nowrap;">ORDEN #4821</div>
+      </div>
+
+      <div style="margin-top: 44px; background: #ffffff; border: 1px solid #e3e3dd; border-radius: 16px; padding: 44px 34px 38px;">
+
+        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
+          <div style="text-align: center;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #6b7276; border: 1px solid #e3e3dd; border-radius: 999px; padding: 4px 9px; background: #fbfbf9;">EN CUSTODIA</span></div>
+          <div style="text-align: center;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #ffffff; border: 1px solid #14171a; border-radius: 999px; padding: 4px 9px; background: #14171a;">EN INSPECCIÓN</span></div>
+          <div style="text-align: center;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #6b7276; border: 1px solid #e3e3dd; border-radius: 999px; padding: 4px 9px; background: #fbfbf9;">PAGO ENVIADO</span></div>
+          <div style="text-align: center;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #6b7276; border: 1px solid #e3e3dd; border-radius: 999px; padding: 4px 9px; background: #fbfbf9;">LIBERADO</span></div>
+          <div style="text-align: center;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: oklch(0.42 0.09 150); border: 1px solid oklch(0.85 0.05 150); border-radius: 999px; padding: 4px 9px; background: oklch(0.96 0.03 150);">DESCARGADO</span></div>
+          <div style="text-align: center;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #9aa0a6; border: 1px dashed #d3d3cb; border-radius: 999px; padding: 4px 9px; background: #f6f6f3;">PURGADO</span></div>
+        </div>
+
+        <div style="position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 22px; height: 30px; align-items: center;">
+          <div style="position: absolute; left: 8%; right: 25%; top: 50%; border-top: 1.5px dashed #d3d3cb;"></div>
+          <div style="position: absolute; left: 75%; right: 8%; top: 50%; border-top: 1.5px dotted #d3d3cb;"></div>
+          <div style="display: flex; justify-content: center;"><span style="position: relative; z-index: 1; width: 15px; height: 15px; border-radius: 50%; background: #ffffff; border: 2px solid #14171a;"></span></div>
+          <div style="display: flex; justify-content: center;">
+            <span style="position: relative; z-index: 1; width: 26px; height: 26px; border-radius: 50%; background: #14171a; display: flex; align-items: center; justify-content: center;">
+              <span style="position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid #14171a; animation: pulseRing 2.6s ease-out infinite;"></span>
+              <span style="width: 8px; height: 8px; border-radius: 2px; background: #f6f6f3;"></span>
+            </span>
+          </div>
+          <div style="display: flex; justify-content: center;"><span style="position: relative; z-index: 1; width: 15px; height: 15px; border-radius: 50%; background: #ffffff; border: 2px solid #14171a;"></span></div>
+          <div style="display: flex; justify-content: center;"><span style="position: relative; z-index: 1; width: 15px; height: 15px; border-radius: 50%; background: #ffffff; border: 2px solid #14171a;"></span></div>
+          <div style="display: flex; justify-content: center;"><span style="position: relative; z-index: 1; width: 15px; height: 15px; border-radius: 50%; background: oklch(0.55 0.10 195); border: 2px solid oklch(0.55 0.10 195);"></span></div>
+          <div style="display: flex; justify-content: center;"><span style="position: relative; z-index: 1; width: 15px; height: 15px; border-radius: 50%; background: #f6f6f3; border: 2px dashed #b4b9bd;"></span></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 20px;">
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6;">01</div>
+            <h3 style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 6px 0 6px;">V sube el archivo</h3>
+            <p style="font-size: 13px; line-height: 1.5; color: #4b5155; margin: 0;">Se cifra en su equipo y entra en custodia. Elige cuál de sus archivos vende.</p>
+          </div>
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6;">02</div>
+            <h3 style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 6px 0 6px;">C inspecciona la ficha</h3>
+            <p style="font-size: 13px; line-height: 1.5; color: #4b5155; margin: 0;">Extensión, peso, metadata y hash. Descarga bloqueada: verifica, no obtiene.</p>
+          </div>
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6;">03</div>
+            <h3 style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 6px 0 6px;">C paga por fuera</h3>
+            <p style="font-size: 13px; line-height: 1.5; color: #4b5155; margin: 0;">Transferencia directa a V y sube el comprobante a la orden.</p>
+          </div>
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6;">04</div>
+            <h3 style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 6px 0 6px;">V libera</h3>
+            <p style="font-size: 13px; line-height: 1.5; color: #4b5155; margin: 0;">Ve la plata y habilita la descarga. Si calla 24 h, la libera la plataforma.</p>
+          </div>
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6;">05</div>
+            <h3 style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 6px 0 6px;">C descarga</h3>
+            <p style="font-size: 13px; line-height: 1.5; color: #4b5155; margin: 0;">Baja el archivo cuando quiera y se comprueba el hash al terminar.</p>
+          </div>
+          <div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6;">06</div>
+            <h3 style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 6px 0 6px;">Purga automática</h3>
+            <p style="font-size: 13px; line-height: 1.5; color: #4b5155; margin: 0;">Confirmada la descarga, el archivo se borra de la custodia. No queda copia.</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 36px; padding-top: 28px; border-top: 1px solid #eeeee8; display: grid; grid-template-columns: 1fr 1fr; gap: 28px;">
+          <div style="border: 1px solid #e3e3dd; border-radius: 12px; padding: 20px 22px; background: #fbfbf9;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; color: oklch(0.5 0.10 195);">RUTA DEL ARCHIVO</div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4b5155;">
+              <span style="border: 1.5px solid #14171a; border-radius: 6px; padding: 6px 9px; background: #ffffff;">V</span>
+              <span style="flex: 1; border-top: 1.5px solid #14171a;"></span>
+              <span style="border: 1.5px solid #14171a; border-radius: 6px; padding: 6px 9px; background: #14171a; color: #f6f6f3;">CUSTODIA</span>
+              <span style="flex: 1; border-top: 1.5px dashed #14171a;"></span>
+              <span style="border: 1.5px solid #14171a; border-radius: 6px; padding: 6px 9px; background: #ffffff;">C</span>
+            </div>
+            <p style="font-size: 13px; color: #6b7276; margin: 14px 0 0; line-height: 1.5;">Pasa por nuestros servidores solo mientras la orden vive, y se borra al descargarse.</p>
+          </div>
+          <div style="border: 1px solid #e3e3dd; border-radius: 12px; padding: 20px 22px; background: #fbfbf9;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; color: #9aa0a6;">RUTA DEL DINERO</div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4b5155;">
+              <span style="border: 1.5px solid #d3d3cb; border-radius: 6px; padding: 6px 9px; background: #ffffff;">C</span>
+              <span style="flex: 1; border-top: 1.5px solid #d3d3cb;"></span>
+              <span style="border: 1.5px dashed #d3d3cb; border-radius: 6px; padding: 6px 9px; color: #b4b9bd; text-decoration: line-through;">MYTRUEQUE</span>
+              <span style="flex: 1; border-top: 1.5px solid #d3d3cb;"></span>
+              <span style="border: 1.5px solid #d3d3cb; border-radius: 6px; padding: 6px 9px; background: #ffffff;">V</span>
+            </div>
+            <p style="font-size: 13px; color: #6b7276; margin: 14px 0 0; line-height: 1.5;">Cuenta a cuenta, fuera de la plataforma. No tocamos, retenemos ni cobramos dinero.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="inspeccion" style="border-top: 1px solid #e3e3dd;">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 76px 32px 84px; display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 64px; align-items: center;">
+      <div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6b7276;">La inspección</div>
+        <h2 style="font-size: 38px; letter-spacing: -0.03em; font-weight: 700; margin: 14px 0 0; text-wrap: pretty;">Todo sobre el archivo. Menos el archivo.</h2>
+        <p style="font-size: 16.5px; line-height: 1.6; color: #4b5155; margin: 18px 0 0;">Así ve el comprador lo que está a punto de pagar. El archivo ya está en custodia, pero la descarga no se habilita hasta que el vendedor libera. El hash le permite comprobar después que recibió exactamente lo que inspeccionó.</p>
+        <button onClick="{{ toggleAuth }}" style="margin-top: 26px; border: 1px solid #14171a; background: transparent; color: #14171a; padding: 11px 18px; border-radius: 9px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #14171a; color: #f6f6f3;">{{ toggleLabel }}</button>
+        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6; margin: 12px 0 0; letter-spacing: 0.05em;">DEMO INTERACTIVA</p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e3e3dd; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,23,26,0.04), 0 24px 50px -34px rgba(20,23,26,0.30);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 24px; border-bottom: 1px solid #eeeee8; background: #fbfbf9;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="width: 34px; height: 34px; border-radius: 8px; background: #14171a; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #f6f6f3; letter-spacing: 0.04em;">PSD</span>
+            <div>
+              <div style="font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em;">catalogo-otoño-master.psd</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6; margin-top: 2px;">ORDEN #4821 · VENDEDOR @estudio_rios</div>
+            </div>
+          </div>
+          <span style="{{ badgeStyle }}">{{ badgeLabel }}</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #eeeee8;">
+          <div style="background: #ffffff; padding: 18px 24px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; color: #9aa0a6;">EXTENSIÓN</div>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 5px;">.psd · Adobe Photoshop</div>
+          </div>
+          <div style="background: #ffffff; padding: 18px 24px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; color: #9aa0a6;">TAMAÑO</div>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 5px;">1.84 GB (1 976 445 184 bytes)</div>
+          </div>
+          <div style="background: #ffffff; padding: 18px 24px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; color: #9aa0a6;">DIMENSIONES</div>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 5px;">5 906 × 8 268 px · 300 dpi</div>
+          </div>
+          <div style="background: #ffffff; padding: 18px 24px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; color: #9aa0a6;">CAPAS</div>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 5px;">148 · CMYK · sin aplanar</div>
+          </div>
+          <div style="background: #ffffff; padding: 18px 24px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; color: #9aa0a6;">EN CUSTODIA DESDE</div>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 5px;">28 ago 2026, 14:02</div>
+          </div>
+          <div style="background: #ffffff; padding: 18px 24px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; color: #9aa0a6;">PRECIO ACORDADO</div>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 5px;">$ 420 000 COP</div>
+          </div>
+        </div>
+
+        <div style="padding: 18px 24px; border-top: 1px solid #eeeee8; background: #fbfbf9;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; color: #9aa0a6;">HASH SELLADO AL SUBIR · SHA-256</div>
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: oklch(0.42 0.09 150);"><span style="width: 6px; height: 6px; border-radius: 50%; background: oklch(0.62 0.13 150);"></span>VERIFICABLE</span>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4b5155; margin-top: 8px; word-break: break-all; line-height: 1.5;">9f2c4ab1e7d80355c6ae19f4b23d70e8a1c5fd6207bb94e3812a0cf7d45b6e91</div>
+        </div>
+
+        <div style="padding: 22px 24px; border-top: 1px solid #eeeee8;">
+          <sc-if value="{{ locked }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <button disabled="{{ true }}" style="width: 100%; border: 1px dashed #d3d3cb; background: #f6f6f3; color: #9aa0a6; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: not-allowed;">Descarga bloqueada · esperando liberación de V</button>
+              <p style="font-size: 13px; color: #6b7276; margin: 12px 0 0; line-height: 1.5;">Puedes verificar todos los datos y el hash. El archivo está en custodia cifrada: ni V puede retirarlo ni tú descargarlo aún.</p>
+            </div>
+          </sc-if>
+          <sc-if value="{{ unlocked }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <button style="width: 100%; border: none; background: #14171a; color: #f6f6f3; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;" style-hover="background: #2b3034;">Descargar ahora · 1.84 GB</button>
+              <p style="font-size: 13px; color: #6b7276; margin: 12px 0 0; line-height: 1.5;">V liberó la orden. Al confirmarse la descarga se comprueba el hash y el archivo se purga de la custodia.</p>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="garantias" style="border-top: 1px solid #e3e3dd; background: #fbfbf9;">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 76px 32px 84px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6b7276;">Garantías</div>
+      <h2 style="font-size: 38px; letter-spacing: -0.03em; font-weight: 700; margin: 14px 0 0; max-width: 700px; text-wrap: pretty;">Custodia mientras dura el trato. Nada después.</h2>
+      <p style="font-size: 16.5px; line-height: 1.6; color: #4b5155; margin: 18px 0 0; max-width: 640px;">El archivo vive en nuestros servidores solo el tiempo de la orden, cifrado y bloqueado para ambas partes. Eso nos permite garantizar la entrega sin convertirnos en un repositorio de contenido ajeno.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 44px;">
+        <div style="background: #ffffff; border: 1px solid #e3e3dd; border-radius: 14px; padding: 24px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: oklch(0.5 0.10 195);">01 · INTEGRIDAD</div>
+          <h3 style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em; margin: 12px 0 8px;">Hash sellado</h3>
+          <p style="font-size: 14px; line-height: 1.55; color: #4b5155; margin: 0;">Se registra al subir y se comprueba al descargar. Nadie cobra por un archivo y entrega otro.</p>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3e3dd; border-radius: 14px; padding: 24px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: oklch(0.5 0.10 195);">02 · ENTREGA</div>
+          <h3 style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em; margin: 12px 0 8px;">Liberación por tiempo</h3>
+          <p style="font-size: 14px; line-height: 1.55; color: #4b5155; margin: 0;">Con comprobante cargado, si V no libera en 24 h la plataforma habilita la descarga por él.</p>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3e3dd; border-radius: 14px; padding: 24px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: oklch(0.5 0.10 195);">03 · PRIVACIDAD</div>
+          <h3 style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em; margin: 12px 0 8px;">Purga al descargar</h3>
+          <p style="font-size: 14px; line-height: 1.55; color: #4b5155; margin: 0;">Confirmada la descarga, el archivo se borra. Órdenes sin cerrar se purgan a los 30 días.</p>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e3e3dd; border-radius: 14px; padding: 24px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: oklch(0.5 0.10 195);">04 · REPUTACIÓN</div>
+          <h3 style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em; margin: 12px 0 8px;">Historial público</h3>
+          <p style="font-size: 14px; line-height: 1.55; color: #4b5155; margin: 0;">Órdenes pagadas y no liberadas quedan visibles en el perfil del vendedor, con su tiempo de respuesta.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px; border-top: 1px solid #e3e3dd; border-bottom: 1px solid #e3e3dd; padding: 22px 0; display: flex; align-items: flex-start; gap: 14px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9aa0a6; letter-spacing: 0.07em; padding-top: 2px; white-space: nowrap;">SÉ CLARO</span>
+        <p style="font-size: 14.5px; line-height: 1.6; color: #4b5155; margin: 0; max-width: 840px;">MyTrueque custodia el archivo, no el dinero: no podemos devolver un pago hecho por fuera. Usa siempre un medio con comprobante y sube el soporte a la orden — es lo que activa la liberación automática a tu favor.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="preguntas" style="border-top: 1px solid #e3e3dd; background: #14171a; color: #f6f6f3;">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 72px 32px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;">
+        <div>
+          <h2 style="font-size: 34px; letter-spacing: -0.03em; font-weight: 700; margin: 0; text-wrap: pretty;">Sube tu primer archivo hoy.</h2>
+          <p style="font-size: 16px; line-height: 1.6; color: #a7adb1; margin: 16px 0 0;">Cuenta gratis, sin tarjeta y sin instalar nada: funciona desde el navegador.</p>
+          <div style="display: flex; gap: 12px; margin-top: 28px;">
+            <button onClick="{{ goRegister }}" style="border: none; background: #f6f6f3; color: #14171a; padding: 13px 22px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer;" style-hover="background: #ffffff;">Crear cuenta</button>
+            <button onClick="{{ goLogin }}" style="border: 1px solid #3a4045; background: transparent; color: #f6f6f3; padding: 13px 22px; border-radius: 9px; font-size: 15px; font-weight: 500; cursor: pointer;" style-hover="border-color: #6b7276;">Ya tengo cuenta</button>
+          </div>
+        </div>
+        <div style="display: grid; gap: 20px;">
+          <div>
+            <h3 style="font-size: 15.5px; font-weight: 600; margin: 0 0 6px;">¿Ustedes pueden abrir mi archivo?</h3>
+            <p style="font-size: 14.5px; line-height: 1.55; color: #a7adb1; margin: 0;">No. Se cifra en el equipo del vendedor antes de subirse; guardamos el contenido cifrado, no la llave.</p>
+          </div>
+          <div>
+            <h3 style="font-size: 15.5px; font-weight: 600; margin: 0 0 6px;">¿El comprador puede descargar sin pagar?</h3>
+            <p style="font-size: 14.5px; line-height: 1.55; color: #a7adb1; margin: 0;">No. En inspección solo recibe la ficha y el hash. La descarga se habilita al liberarse la orden.</p>
+          </div>
+          <div>
+            <h3 style="font-size: 15.5px; font-weight: 600; margin: 0 0 6px;">¿Y si pago y el vendedor no libera?</h3>
+            <p style="font-size: 14.5px; line-height: 1.55; color: #a7adb1; margin: 0;">Con el comprobante cargado, a las 24 h la plataforma habilita la descarga a tu favor.</p>
+          </div>
+          <div>
+            <h3 style="font-size: 15.5px; font-weight: 600; margin: 0 0 6px;">¿Cuánto tiempo guardan el archivo?</h3>
+            <p style="font-size: 14.5px; line-height: 1.55; color: #a7adb1; margin: 0;">Hasta que se descargue: ahí se purga. Si la orden no se cierra, se borra a los 30 días.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background: #14171a; border-top: 1px solid #262b2f; color: #6b7276;">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 26px 32px; display: flex; align-items: center; justify-content: space-between; font-size: 13px;">
+      <span style="display: flex; align-items: center; gap: 8px; color: #a7adb1;">
+        <span style="width: 9px; height: 9px; border-radius: 50%; background: oklch(0.55 0.10 195); display: inline-block;"></span>
+        MyTrueque.com
+      </span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.05em;">© 2026 · CUSTODIA CIFRADA · PURGA AL DESCARGAR</span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Entrar&quot;,&quot;Crear cuenta&quot;],&quot;default&quot;:&quot;Entrar&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showTrustStrip&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: props.defaultTab === "Crear cuenta" ? "register" : "login", released: false };
+  }
+  tabStyle(active) {
+    return {
+      flex: 1,
+      border: "none",
+      borderRadius: "7px",
+      padding: "10px 12px",
+      fontSize: "14px",
+      fontWeight: active ? 600 : 500,
+      cursor: "pointer",
+      background: active ? "#ffffff" : "transparent",
+      color: active ? "#14171a" : "#6b7276",
+      boxShadow: active ? "0 1px 2px rgba(20,23,26,0.10)" : "none",
+      transition: "background .15s ease, color .15s ease"
+    };
+  }
+  renderVals() {
+    const isLogin = this.state.tab === "login";
+    const rel = this.state.released;
+    return {
+      isLogin,
+      isRegister: !isLogin,
+      loginTabStyle: this.tabStyle(isLogin),
+      registerTabStyle: this.tabStyle(!isLogin),
+      goLogin: () => this.setState({ tab: "login" }),
+      goRegister: () => this.setState({ tab: "register" }),
+      showTrustStrip: this.props.showTrustStrip ?? true,
+      locked: !rel,
+      unlocked: rel,
+      toggleAuth: () => this.setState(s => ({ released: !s.released })),
+      toggleLabel: rel ? "Volver al estado bloqueado" : "Simular: V libera la descarga",
+      badgeLabel: rel ? "LIBERADO" : "EN INSPECCIÓN",
+      badgeStyle: {
+        fontFamily: "'IBM Plex Mono', monospace",
+        fontSize: "10.5px",
+        letterSpacing: "0.08em",
+        borderRadius: "999px",
+        padding: "5px 11px",
+        whiteSpace: "nowrap",
+        background: rel ? "oklch(0.96 0.03 150)" : "#14171a",
+        color: rel ? "oklch(0.42 0.09 150)" : "#f6f6f3",
+        border: rel ? "1px solid oklch(0.85 0.05 150)" : "1px solid #14171a"
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

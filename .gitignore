@@ -1,0 +1,14 @@
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Python (por si se crea algo suelto en la raíz)
+__pycache__/
+*.pyc
+.venv/
+
+# Node (por si se crea algo suelto en la raíz)
+node_modules/

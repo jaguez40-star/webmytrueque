@@ -1,0 +1,110 @@
+@use '@/styles/mixins' as *;
+
+.hero {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 84px var(--content-pad) 72px;
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 72px;
+  align-items: start;
+
+  @include bp-lg {
+    gap: 40px;
+  }
+
+  @include bp-md {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    padding: 40px var(--content-pad-mobile) 44px;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-pill);
+  padding: 6px 14px 6px 10px;
+  background: var(--c-surface);
+  color: var(--c-accent-text);
+  @include mono-label(11.5px, 0.06em);
+}
+
+.badgeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-signal);
+}
+
+.title {
+  font-size: 60px;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  margin-top: 26px;
+  color: var(--c-ink);
+  text-wrap: pretty;
+
+  @include bp-lg {
+    font-size: 42px;
+  }
+
+  @include bp-md {
+    font-size: 36px;
+  }
+
+  @include bp-sm {
+    font-size: 31px;
+  }
+}
+
+.paragraph {
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--c-text-secondary);
+  max-width: 500px;
+  margin-top: 22px;
+  text-wrap: pretty;
+}
+
+.benefits {
+  display: grid;
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.bullet {
+  width: 7px;
+  height: 16px;
+  background: var(--c-accent);
+  transform: skewX(-18deg);
+  border-radius: 2px;
+  margin-top: 4px;
+  flex: none;
+}
+
+.bulletSignal {
+  background: var(--c-signal);
+}
+
+.benefitText {
+  font-size: 15.5px;
+  color: var(--c-ink);
+
+  strong {
+    font-weight: 600;
+  }
+
+  span {
+    color: var(--c-text-secondary);
+  }
+}

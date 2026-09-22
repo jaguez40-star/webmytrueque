@@ -1,0 +1,99 @@
+.button {
+  border: none;
+  border-radius: var(--r-button);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+// --- Tamaños ---
+.sm {
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.md {
+  padding: 10px 17px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lg {
+  padding: 13px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--r-input);
+}
+
+.xl {
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+// --- Variantes ---
+.primary {
+  background: var(--c-accent);
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background: var(--c-accent-hover);
+  }
+}
+
+.secondary {
+  background: var(--c-surface);
+  color: var(--c-ink);
+  border: 1px solid var(--c-border-button);
+
+  &:hover:not(:disabled) {
+    border-color: var(--c-accent);
+    color: var(--c-accent-text);
+  }
+}
+
+.outline-accent {
+  background: var(--c-surface);
+  color: var(--c-accent-text);
+  border: 1px solid var(--c-accent);
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    background: var(--c-accent);
+    color: #ffffff;
+  }
+}
+
+.signal {
+  background: var(--c-signal);
+  color: var(--c-on-signal-strong);
+  font-weight: 700;
+
+  &:hover:not(:disabled) {
+    background: var(--c-signal-hover);
+  }
+}
+
+.ghost-dark {
+  background: transparent;
+  color: var(--c-on-dark);
+  border: 1px solid var(--c-on-dark-border-strong);
+  font-weight: 500;
+
+  &:hover:not(:disabled) {
+    border-color: var(--c-accent-light);
+  }
+}

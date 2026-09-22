@@ -1,0 +1,15 @@
+.page {
+  min-height: 100vh;
+  background: var(--c-bg);
+}
+
+.googleError {
+  max-width: var(--content-max);
+  margin: 16px auto 0;
+  padding: 12px 18px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-alert);
+  border-radius: var(--r-input);
+  color: var(--c-alert);
+  font-size: 14px;
+}

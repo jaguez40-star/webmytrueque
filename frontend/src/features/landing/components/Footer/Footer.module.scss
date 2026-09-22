@@ -1,0 +1,30 @@
+@use '@/styles/mixins' as *;
+
+.footer {
+  background: var(--c-ink);
+  border-top: 1px solid var(--c-on-dark-border);
+  color: var(--c-text-placeholder);
+}
+
+.bar {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 26px var(--content-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+
+  @include bp-md {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 20px var(--content-pad-mobile);
+  }
+}
+
+.legal {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+}
