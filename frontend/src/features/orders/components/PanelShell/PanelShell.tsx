@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { PanelHeader } from '../PanelHeader'
+import { PanelFooter } from '../PanelFooter'
 import styles from './PanelShell.module.scss'
 
 interface PanelShellProps {
@@ -7,7 +8,6 @@ interface PanelShellProps {
   /** Si se pasa, el header muestra "volver" en lugar de la marca. */
   volverA?: string
   volverTexto?: string
-  titulo?: string
   /** La barra fija de acción, si la pantalla tiene una. */
   barra?: ReactNode
 }
@@ -23,13 +23,15 @@ export function PanelShell({
   children,
   volverA,
   volverTexto,
-  titulo,
   barra,
 }: PanelShellProps) {
   return (
-    <div className={styles.page}>
-      <PanelHeader volverA={volverA} volverTexto={volverTexto} titulo={titulo} />
-      <main className={`${styles.main} ${barra ? styles.conBarra : ''}`}>{children}</main>
+    // La reserva de espacio para la barra fija va en el contenedor, no en el <main>: si
+    // fuera solo en el main, la barra taparía el footer, que viene después.
+    <div className={`${styles.page} ${barra ? styles.conBarra : ''}`}>
+      <PanelHeader volverA={volverA} volverTexto={volverTexto} />
+      <main className={styles.main}>{children}</main>
+      <PanelFooter />
       {barra}
     </div>
   )

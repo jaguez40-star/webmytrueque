@@ -9,7 +9,9 @@
 }
 
 .bar {
-  height: 56px;
+  // 72px, igual que el header de la landing: es la misma marca y debe pesar lo mismo al
+  // entrar. El logo de 44px no cabe cómodo en menos.
+  height: 72px;
   max-width: var(--content-max);
   margin: 0 auto;
   padding: 0 var(--pad-movil);
@@ -19,45 +21,50 @@
   gap: 12px;
 
   @include desde-md {
-    height: 68px;
     padding: 0 var(--content-pad);
   }
 }
 
 /* ── Marca ── */
 
+// Réplica exacta del logo de la landing (shared/components/Logo, variant "header"): misma
+// placa, mismas barras, misma tipografía. Se dibuja aquí en vez de importar <Logo> porque
+// ese componente ya es un <a href="#top"> y meterlo dentro de un <Link> produce un <a>
+// dentro de otro <a> — HTML inválido que React reporta en consola (hallazgo H2). Así el
+// aspecto es idéntico y el enlace lleva a /panel, que es lo que toca aquí dentro.
 .marca {
-  // 🔴 H8 — También es un enlace (lleva a /panel), así que necesita área táctil como los
-  // demás. Sin esto medía 30px de alto (el de la placa) y se fallaba con el dedo. El
-  // margen negativo compensa el padding para que la marca no se despegue del borde.
   @include objetivo-tactil(44px);
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 12px;
   margin-left: -8px;
   padding: 0 8px;
   text-decoration: none;
   color: var(--c-ink);
+
+  &:hover {
+    color: var(--c-ink);
+  }
 }
 
 .placa {
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   flex: none;
-  border-radius: 9px;
+  border-radius: 12px;
   background: var(--c-ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5px;
+  gap: 3px;
 }
 
 .barraAcento,
 .barraSenal {
-  width: 4px;
-  height: 13px;
+  width: 8px;
+  height: 22px;
   border-radius: 2px;
-  transform: skewX(-13deg);
+  transform: skewX(-18deg);
 }
 
 .barraAcento {
@@ -69,9 +76,17 @@
 }
 
 .wordmark {
-  font-size: 17px;
+  font-size: 25px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+
+.tld {
+  color: var(--c-text-placeholder);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0;
 }
 
 /* ── Volver ── */
@@ -88,37 +103,4 @@
   font-weight: 500;
   color: var(--c-ink);
   text-decoration: none;
-}
-
-.titulo {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--c-ink);
-}
-
-/* ── Avatar ── */
-
-.avatarZona {
-  @include objetivo-tactil(44px);
-  min-width: 44px;
-  margin-right: -10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
-
-.avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--c-surface-accent);
-  border: 1px solid var(--c-border-strong);
-  color: var(--c-accent-text);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

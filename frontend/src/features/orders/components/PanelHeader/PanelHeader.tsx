@@ -1,33 +1,26 @@
 import { Link } from 'react-router-dom'
-import { useAuthStore } from '@/features/auth/store/authStore'
+import { MenuCuenta } from '../MenuCuenta'
 import styles from './PanelHeader.module.scss'
 
 interface PanelHeaderProps {
   /** Cuando se pasa, el header muestra "volver" en vez de la marca. */
   volverA?: string
   volverTexto?: string
-  /** Título corto a la derecha (solo con `volverA`). */
-  titulo?: string
 }
 
 /**
- * Header del panel. 56px en teléfono — 16 menos que el de la landing, que a 390px no deja
- * respirar al contenido.
+ * Header del panel: la marca (o "volver") a la izquierda y el menú de cuenta a la derecha.
  *
- * 🔴 La marca se dibuja aquí inline y NO se usa `<Logo>`: `Logo variant="header"` renderiza
- * su propio `<a href="#top">`, y meterlo dentro de un `<Link>` produce un `<a>` dentro de
- * otro `<a>` — HTML inválido que React reporta como error en consola (hallazgo H2, y se
- * reprodujo). Además esta marca es distinta: más pequeña y sin el sufijo ".shop", que a
- * 360px no cabe junto al avatar.
+ * El avatar está en TODAS las pantallas, no solo en la bandeja: antes las internas ponían
+ * un título ahí y dejaban al usuario sin acceso a su cuenta sin volver atrás. El título
+ * sobraba, además, porque cada pantalla ya lo dice en su propio encabezado.
  *
- * El @usuario y "Cerrar sesión" NO viven aquí: se midieron 32px de desborde horizontal a
- * 390px con logo + chip + botón (hallazgo H3). Viven en /panel/cuenta, a un toque del avatar.
+ * 🔴 La marca se dibuja inline y NO se usa `<Logo>`: `Logo variant="header"` renderiza su
+ * propio `<a href="#top">`, y meterlo dentro de un `<Link>` produce un `<a>` dentro de otro
+ * `<a>` — HTML inválido que React reporta en consola (hallazgo H2, reproducido). Los
+ * estilos replican los de la landing para que sea exactamente el mismo logo.
  */
-export function PanelHeader({ volverA, volverTexto = 'Órdenes', titulo }: PanelHeaderProps) {
-  const user = useAuthStore((state) => state.user)
-  // Dos últimos caracteres del @usuario: "@trq-925j" -> "9j". Basta para reconocerse.
-  const iniciales = user?.handle.slice(-2) ?? '··'
-
+export function PanelHeader({ volverA, volverTexto = 'Órdenes' }: PanelHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.bar}>
@@ -54,17 +47,13 @@ export function PanelHeader({ volverA, volverTexto = 'Órdenes', titulo }: Panel
               <span className={styles.barraAcento} />
               <span className={styles.barraSenal} />
             </span>
-            <span className={styles.wordmark}>MyTrueque</span>
+            <span className={styles.wordmark}>
+              MyTrueque<span className={styles.tld}>.shop</span>
+            </span>
           </Link>
         )}
 
-        {titulo ? (
-          <span className={styles.titulo}>{titulo}</span>
-        ) : (
-          <Link to="/panel/cuenta" className={styles.avatarZona} aria-label="Tu cuenta">
-            <span className={styles.avatar}>{iniciales}</span>
-          </Link>
-        )}
+        <MenuCuenta />
       </div>
     </header>
   )

@@ -59,8 +59,11 @@
   --content-pad-mobile: 18px;
   // Márgenes laterales del panel en teléfono.
   --pad-movil: 16px;
-  // Alto de la barra de acción fija.
-  --alto-barra: 84px;
+  // Espacio que el contenido reserva al final cuando hay barra de acción fija.
+  // Debe cubrir la barra MÁS ALTA, que es la de "nueva orden": lleva una nota de dos
+  // líneas encima del botón (~121px medidos a 360px). Con 84px el pie quedaba tapado.
+  // Que sobre un poco solo añade aire; que falte esconde contenido.
+  --alto-barra: 124px;
   // Respeto al indicador de inicio de iOS y a las barras de gestos de Android.
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 

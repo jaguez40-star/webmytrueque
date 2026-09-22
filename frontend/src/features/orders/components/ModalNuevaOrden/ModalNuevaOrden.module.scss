@@ -1,28 +1,18 @@
 @use '@/styles/mixins' as *;
 
-.titulo {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  color: var(--c-ink);
-
-  @include desde-md {
-    font-size: 29px;
-  }
+.pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.subtitulo {
-  font-size: 14.5px;
-  line-height: 1.45;
+.nota {
+  font-size: 12.5px;
+  line-height: 1.4;
   color: var(--c-text-secondary);
-  margin-top: 7px;
+  max-width: 260px;
 }
-
-.formulario {
-  margin-top: 14px;
-}
-
-/* ── Barra fija ── */
 
 .notaEstado {
   font-family: var(--font-mono);
@@ -34,11 +24,12 @@
 
 .botonCrear {
   @include objetivo-tactil(52px);
-  width: 100%;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
+  padding: 0 22px;
   background: var(--c-accent);
   color: #ffffff;
   border: none;

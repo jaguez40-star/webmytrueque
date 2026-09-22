@@ -74,7 +74,6 @@ export function DetalleOrdenPage() {
   return (
     <PanelShell
       volverA="/panel"
-      titulo={`#${orden.id}`}
       barra={
         miTurno ? (
           <BarraAccion>

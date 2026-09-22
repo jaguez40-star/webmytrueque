@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PanelPage } from './PanelPage'
 import { ORDENES_DE_EJEMPLO } from '../data/ordersFixtures'
@@ -26,10 +26,20 @@ describe('PanelPage', () => {
 
     expect(screen.getByText(/Tu cuenta está lista/)).toBeInTheDocument()
     expect(screen.getByTestId('mi-handle')).toHaveTextContent('@trq-925j')
-    expect(screen.getByRole('link', { name: /Crear mi primera orden/ })).toHaveAttribute(
+  })
+
+  it('el estado vacío ofrece vender como única acción, sin barra fija duplicada', () => {
+    useOrdersMock.mockReturnValue({ orders: [], isLoading: false })
+    renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
+
+    // Subir archivo es la acción: navega a crear la orden.
+    expect(screen.getByRole('link', { name: /Subir archivo para vender/ })).toHaveAttribute(
       'href',
       '/panel/nueva',
     )
+    // Y es la ÚNICA del contenido: las otras dos tarjetas son informativas, no enlaces.
+    // Se acota al <main> porque el header aporta los suyos (marca y avatar).
+    expect(within(screen.getByRole('main')).getAllByRole('link')).toHaveLength(1)
   })
 
   it('con órdenes arranca mostrando las que le tocan al usuario', () => {

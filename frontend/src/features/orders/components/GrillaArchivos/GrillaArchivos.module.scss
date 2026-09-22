@@ -1,0 +1,136 @@
+@use '@/styles/mixins' as *;
+
+.seccion {
+  margin-top: 26px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.titulo {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--c-ink);
+}
+
+.contador {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--c-border);
+  color: var(--c-text-secondary);
+  border-radius: var(--r-pill);
+  padding: 2px 8px;
+}
+
+/* ── Grilla ── */
+
+.grilla {
+  display: grid;
+  // Dos columnas ya en teléfono: es una grilla de archivos, no una lista. A 360px cada
+  // tile queda en ~164px, que alcanza para la extensión, dos líneas de nombre y el peso.
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include desde-md {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @include desde-lg {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.tile {
+  @include objetivo-tactil(110px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 13px;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--c-accent);
+  }
+}
+
+.tileTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.extension {
+  @include mono-label(10px, 0.05em);
+  flex: none;
+  background: var(--c-surface-accent);
+  color: var(--c-accent-text);
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+
+.nombre {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--c-ink);
+  // Dos líneas y corta: los nombres reales son largos y descuadrarían la grilla.
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--c-text-muted);
+  margin-top: auto;
+  padding-top: 8px;
+  overflow-wrap: anywhere;
+}
+
+/* ── Sin archivos ── */
+
+.vacia {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  background: var(--c-surface);
+  border: 1px dashed var(--c-border-strong);
+  border-radius: 13px;
+  padding: 16px;
+}
+
+.vaciaIcono {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 11px;
+  background: var(--c-bg);
+  color: var(--c-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vaciaTexto {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--c-text-secondary);
+}
