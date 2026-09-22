@@ -50,4 +50,16 @@
   &:hover {
     background: var(--c-accent-hover);
   }
+
+  // Sin esto se ve exactamente igual activo que deshabilitado: el usuario no tiene forma
+  // de saber que hace falta completar el formulario antes de poder pulsarlo.
+  &:disabled {
+    background: var(--c-border);
+    color: var(--c-text-muted);
+    cursor: not-allowed;
+
+    &:hover {
+      background: var(--c-border);
+    }
+  }
 }
