@@ -225,15 +225,19 @@ valores de ejemplo, para que cualquiera sepa qué necesita sin exponer nada.
 - **Proyecto**: `MyTrueque` — Google Auth Platform, organización "Sin organización".
 - **Cuenta dueña**: cuenta de Google dedicada al proyecto (no la personal).
 - **Cliente OAuth**: "Aplicación web", creado el 2026-09-21.
-  - Origen JS autorizado: `http://localhost:5173`
-  - URI de redireccionamiento: `http://localhost:8000/auth/google/callback`
-- **Estado**: modo *Testing* — solo entran los correos dados de alta en
-  **Público → Usuarios de prueba** (máximo 100). Para abrirlo a cualquiera hay
-  que publicar en *Production*; con permisos básicos (nombre, correo, foto) es
-  automático y gratis, sin proceso de verificación.
-- **Usuario de prueba dado de alta**: `rr5797372@gmail.com`. Es el **único**
-  correo que puede completar el login con Google mientras la app esté en
-  *Testing* — probar con otro devuelve `access_denied`.
+  - Orígenes JS autorizados: `http://localhost:5173` y `https://mytrueque.shop`
+  - URIs de redireccionamiento: `http://localhost:8000/auth/google/callback` y
+    `https://mytrueque.shop/auth/google/callback`
+- **Estado: En producción** (publicado el 2026-09-22). Cualquier cuenta de
+  Google puede completar el login — ya no hace falta estar en una lista de
+  usuarios de prueba. No requirió verificación de Google porque usa un solo
+  dominio, sin logo cargado en la pantalla de consentimiento y solo permisos
+  básicos (nombre, correo, foto). Si en algún momento se sube un logo,
+  Google va a pedir verificar la propiedad del dominio en Search Console
+  antes de dejar publicar de nuevo.
+- **Páginas de privacidad y términos** (obligatorias para publicar):
+  `https://mytrueque.shop/privacidad` y `https://mytrueque.shop/terminos` —
+  código en `frontend/src/features/legal/`.
 - **Si se pierde el Client Secret**: no se puede recuperar, se genera uno nuevo
   desde Google Auth Platform → Clientes → (el cliente) → Agregar secreto.
 - **Costo**: cero. Sign in with Google no se factura y no pide tarjeta.
