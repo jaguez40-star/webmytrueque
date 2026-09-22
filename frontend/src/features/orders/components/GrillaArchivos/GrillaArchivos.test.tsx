@@ -41,40 +41,42 @@ const ORDEN_MULTIARCHIVO: Order = {
   comprobante: null,
 }
 
-describe('GrillaArchivos', () => {
+describe('GrillaArchivos — rol vendedor', () => {
   it('sin archivos explica dónde aparecerán', () => {
-    renderConWrappers(<GrillaArchivos ordenes={[]} />, { usuario: USUARIO_DE_PRUEBA })
+    renderConWrappers(<GrillaArchivos ordenes={[]} rol="vendedor" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
     expect(screen.getByText(/Aquí aparecerán los archivos que subas/)).toBeInTheDocument()
     expect(screen.queryAllByRole('link')).toHaveLength(0)
   })
 
   it('muestra solo los archivos que uno vende, no los que compra', () => {
-    renderConWrappers(<GrillaArchivos ordenes={ORDENES_DE_EJEMPLO} />, {
+    renderConWrappers(<GrillaArchivos ordenes={ORDENES_DE_EJEMPLO} rol="vendedor" />, {
       usuario: USUARIO_DE_PRUEBA,
     })
 
     // De los fixtures, las órdenes con rol vendedor son 4821 y 4840.
     expect(screen.getByText('entrega-final-branding.zip')).toBeInTheDocument()
     expect(screen.getByText('plantillas-notion-pack.zip')).toBeInTheDocument()
-    // Las de compra no son archivos propios: no van en la grilla.
+    // Las de compra no son archivos propios: no van en esta grilla.
     expect(screen.queryByText('dataset-clientes-2026.csv')).not.toBeInTheDocument()
     expect(screen.queryByText('masterclass-fotografia.mp4')).not.toBeInTheDocument()
     expect(screen.getAllByRole('link')).toHaveLength(2)
   })
 
   it('cada archivo lleva a su orden y dice a quién se vende', () => {
-    renderConWrappers(<GrillaArchivos ordenes={ORDENES_DE_EJEMPLO} />, {
+    renderConWrappers(<GrillaArchivos ordenes={ORDENES_DE_EJEMPLO} rol="vendedor" />, {
       usuario: USUARIO_DE_PRUEBA,
     })
 
     const tile = screen.getByText('entrega-final-branding.zip').closest('a')
     expect(tile).toHaveAttribute('href', '/panel/orden/4821')
     expect(tile).toHaveTextContent('240,4 MB')
-    expect(tile).toHaveTextContent('@trq-4f7k')
+    expect(tile).toHaveTextContent('para @trq-4f7k')
   })
 
   it('una orden con varios archivos los lista todos, no los esconde detrás de "N archivos"', () => {
-    renderConWrappers(<GrillaArchivos ordenes={[ORDEN_MULTIARCHIVO]} />, {
+    renderConWrappers(<GrillaArchivos ordenes={[ORDEN_MULTIARCHIVO]} rol="vendedor" />, {
       usuario: USUARIO_DE_PRUEBA,
     })
 
@@ -94,5 +96,36 @@ describe('GrillaArchivos', () => {
     expect(tarjeta).toHaveTextContent('43 KB')
     // El comprador se dice UNA sola vez, no repetido por archivo.
     expect(screen.getAllByText(/@trq-be4r/)).toHaveLength(1)
+  })
+})
+
+/**
+ * Sin esta grilla, quien compra no tiene ninguna forma de ver la orden que le llegó: no
+ * hay bandeja ni aviso en otro lado del panel. Es el mismo componente que la de ventas,
+ * con el rol y el copy invertidos.
+ */
+describe('GrillaArchivos — rol comprador', () => {
+  it('sin compras explica dónde aparecerán, con copy propio', () => {
+    renderConWrappers(<GrillaArchivos ordenes={[]} rol="comprador" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
+    expect(screen.getByText('Tus compras pendientes')).toBeInTheDocument()
+    expect(screen.getByText(/Aquí aparecerán los archivos que compres/)).toBeInTheDocument()
+  })
+
+  it('muestra solo lo que uno compra, con "de @vendedor" en vez de "para"', () => {
+    renderConWrappers(<GrillaArchivos ordenes={ORDENES_DE_EJEMPLO} rol="comprador" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
+
+    // De los fixtures, las órdenes con rol comprador y abiertas son 4835 y 4829
+    // (4812 está LIBERADO, que no es un estado cerrado — también debería verse).
+    expect(screen.getByText('masterclass-fotografia.mp4')).toBeInTheDocument()
+    expect(screen.getByText('identidad-visual-cafe.ai')).toBeInTheDocument()
+    // Lo que uno vende no aparece aquí.
+    expect(screen.queryByText('entrega-final-branding.zip')).not.toBeInTheDocument()
+
+    const tile = screen.getByText('masterclass-fotografia.mp4').closest('a')
+    expect(tile).toHaveTextContent('de @trq-9k2f')
   })
 })

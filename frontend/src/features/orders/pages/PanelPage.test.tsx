@@ -57,12 +57,22 @@ describe('PanelPage', () => {
     expect(screen.queryByTestId('order-card-4821')).not.toBeInTheDocument()
   })
 
-  it('con órdenes de venta abiertas, la grilla las muestra', () => {
+  it('con órdenes de venta abiertas, la grilla de ventas las muestra', () => {
     useOrdersMock.mockReturnValue({ orders: ORDENES_DE_EJEMPLO, isLoading: false })
     renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
 
     // 4821 y 4840 son ventas propias abiertas en los fixtures.
     expect(screen.getByText('entrega-final-branding.zip')).toBeInTheDocument()
     expect(screen.getByText('plantillas-notion-pack.zip')).toBeInTheDocument()
+  })
+
+  it('con órdenes de compra abiertas, la grilla de compras las muestra', () => {
+    // Sin esta grilla, quien compra no tiene ninguna forma de ver la orden que le llegó.
+    useOrdersMock.mockReturnValue({ orders: ORDENES_DE_EJEMPLO, isLoading: false })
+    renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
+
+    expect(screen.getByText('Tus compras pendientes')).toBeInTheDocument()
+    expect(screen.getByText('masterclass-fotografia.mp4')).toBeInTheDocument()
+    expect(screen.getByText('identidad-visual-cafe.ai')).toBeInTheDocument()
   })
 })

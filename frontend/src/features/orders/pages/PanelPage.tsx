@@ -13,8 +13,11 @@ import styles from './PanelPage.module.scss'
  *
  * Antes tenía dos layouts distintos: la bienvenida cuando `orders.length === 0`, y una
  * bandeja con pestañas "Te toca"/"Esperando" en cuanto había alguna orden. Se eliminó la
- * bandeja: ahora el panel SIEMPRE muestra el resumen de cuenta + "Tus archivos en
- * custodia", tengas 0 órdenes o 20 — es una sola pantalla, no dos que alternan.
+ * bandeja: ahora el panel SIEMPRE muestra el resumen de cuenta + dos grillas — una de lo
+ * que vendes y otra de lo que compras —, tengas 0 órdenes o 20.
+ *
+ * 🔴 Las dos grillas son necesarias: quitar la de compras deja al comprador sin ninguna
+ * forma de ver la orden que le llegó (no hay bandeja ni notificación en otro lado).
  */
 export function PanelPage() {
   const user = useAuthStore((state) => state.user)
@@ -26,7 +29,8 @@ export function PanelPage() {
   return (
     <PanelShell>
       <ResumenCuenta handle={user?.handle ?? ''} location={location} />
-      <GrillaArchivos ordenes={orders} />
+      <GrillaArchivos ordenes={orders} rol="vendedor" />
+      <GrillaArchivos ordenes={orders} rol="comprador" />
     </PanelShell>
   )
 }
