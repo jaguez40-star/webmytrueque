@@ -230,7 +230,15 @@ def purgar_orden(db: Session, orden_id: int, vendedor: User) -> Order:
     orden = _buscar_orden(db, orden_id)
     if orden.seller_id != vendedor.id:
         raise NoEresElVendedorError
+    return purgar_orden_sin_permisos(db, orden)
 
+
+def purgar_orden_sin_permisos(db: Session, orden: Order) -> Order:
+    """El borrado en sí, ya resuelto quién puede hacerlo.
+
+    Lo usa el panel de administración, que no es el vendedor de nada y aun así manda.
+    Separado a propósito: quien lo llame está diciendo "ya comprobé los permisos".
+    """
     borrar_carpeta(get_settings().custodia_path / str(orden.id))
     orden.state = "PURGADO"
     db.commit()
@@ -252,7 +260,11 @@ def purgar_archivo(db: Session, orden_id: int, archivo_id: int, vendedor: User) 
     orden = _buscar_orden(db, orden_id)
     if orden.seller_id != vendedor.id:
         raise NoEresElVendedorError
+    return purgar_archivo_sin_permisos(db, orden, archivo_id)
 
+
+def purgar_archivo_sin_permisos(db: Session, orden: Order, archivo_id: int) -> Order:
+    """Igual que `purgar_archivo()`, pero sin comprobar quién pide. Para el panel admin."""
     archivo = db.get(OrderFile, archivo_id)
     if archivo is None or archivo.order_id != orden.id:
         raise ArchivoNoEncontradoError

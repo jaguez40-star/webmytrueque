@@ -27,6 +27,27 @@ describe('MenuCuenta', () => {
     )
   })
 
+  it('una cuenta corriente no ve el enlace al almacenamiento', async () => {
+    const user = userEvent.setup()
+    renderConWrappers(<MenuCuenta />, { usuario: USUARIO_DE_PRUEBA })
+
+    await user.click(screen.getByRole('button', { name: /Tu cuenta/ }))
+    expect(screen.queryByRole('link', { name: /Almacenamiento/ })).not.toBeInTheDocument()
+  })
+
+  it('la cuenta administradora sí lo ve, y lleva al panel', async () => {
+    const user = userEvent.setup()
+    renderConWrappers(<MenuCuenta />, {
+      usuario: { ...USUARIO_DE_PRUEBA, esAdmin: true },
+    })
+
+    await user.click(screen.getByRole('button', { name: /Tu cuenta/ }))
+    expect(screen.getByRole('link', { name: /Almacenamiento/ })).toHaveAttribute(
+      'href',
+      '/panel/admin',
+    )
+  })
+
   it('se cierra con Escape', async () => {
     const user = userEvent.setup()
     renderConWrappers(<MenuCuenta />, { usuario: USUARIO_DE_PRUEBA })

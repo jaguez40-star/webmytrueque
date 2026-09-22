@@ -5,6 +5,7 @@ import { PanelPage } from '@/features/orders/pages/PanelPage'
 import { DetalleOrdenPage } from '@/features/orders/pages/DetalleOrdenPage'
 import { NuevaOrdenPage } from '@/features/orders/pages/NuevaOrdenPage'
 import { ModalNuevaOrden } from '@/features/orders/components/ModalNuevaOrden'
+import { AdminPage } from '@/features/admin/pages/AdminPage'
 import { RutaPrivada } from '@/features/auth/components/RutaPrivada'
 import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser'
 import { useEsPantallaAncha } from '@/shared/hooks/useMediaQuery'
@@ -54,6 +55,17 @@ export function App() {
           element={
             <RutaPrivada>
               <NuevaOrdenPage />
+            </RutaPrivada>
+          }
+        />
+        {/* No hay guardia de admin en el cliente: la pantalla se pide igual y el backend
+            responde 404 si la cuenta no manda. Poner aquí la decisión sería fingir una
+            seguridad que vive en el servidor. */}
+        <Route
+          path="/panel/admin"
+          element={
+            <RutaPrivada>
+              <AdminPage />
             </RutaPrivada>
           }
         />

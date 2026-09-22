@@ -8,6 +8,8 @@ o para escribirlo mata el proceso.
 import hashlib
 import shutil
 import uuid
+import zipfile
+from collections.abc import Iterator
 from pathlib import Path
 
 from fastapi import UploadFile
@@ -78,3 +80,70 @@ def borrar_carpeta(directorio: Path) -> None:
 def borrar_archivo(ruta: Path) -> None:
     """Borra un archivo suelto de una orden. No falla si ya no está."""
     ruta.unlink(missing_ok=True)
+
+
+def disco_total_bytes(directorio: Path) -> int:
+    return shutil.disk_usage(directorio).total
+
+
+def peso_de_carpeta(directorio: Path) -> int:
+    """Bytes que ocupa una carpeta, sumando sus archivos. 0 si no existe."""
+    if not directorio.is_dir():
+        return 0
+    return sum(f.stat().st_size for f in directorio.iterdir() if f.is_file())
+
+
+class _BufferZip:
+    """Destino de escritura para `zipfile` que va entregando lo escrito, sin fichero.
+
+    🔴 NO es seekable a propósito: así `zipfile` genera el ZIP en modo flujo (descriptores
+    de datos al vuelo) y nunca necesita volver atrás a reescribir cabeceras. Un ZIP normal
+    exigiría un archivo temporal, y con 2,9 GB libres en el servidor un backup de 1,5 GB
+    dejaría el disco al borde — precisamente lo que `MARGEN_DISCO_BYTES` intenta evitar.
+    """
+
+    def __init__(self) -> None:
+        self._pendiente = bytearray()
+        self._escrito = 0
+
+    def write(self, datos: bytes, /) -> int:
+        self._pendiente.extend(datos)
+        self._escrito += len(datos)
+        return len(datos)
+
+    def flush(self) -> None:
+        pass
+
+    def close(self) -> None:
+        # No hay nada que cerrar: lo pide el protocolo de `zipfile`, que espera un fichero.
+        pass
+
+    def tell(self) -> int:
+        return self._escrito
+
+    def seekable(self) -> bool:
+        return False
+
+    def tomar(self) -> bytes:
+        datos = bytes(self._pendiente)
+        self._pendiente.clear()
+        return datos
+
+
+def zip_en_streaming(archivos: list[tuple[Path, str]]) -> Iterator[bytes]:
+    """Genera un ZIP como flujo de bloques. `archivos` son pares (ruta en disco, nombre dentro).
+
+    Sin compresión (`ZIP_STORED`): lo que se guarda son PNG, ZIP y MP4, que ya vienen
+    comprimidos — gastar la CPU de un t3.micro para no ahorrar nada sería un mal negocio.
+    """
+    buffer = _BufferZip()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_STORED) as zf:
+        for ruta, nombre in archivos:
+            if not ruta.is_file():
+                continue
+            with zf.open(nombre, "w") as destino, ruta.open("rb") as origen:
+                while bloque := origen.read(CHUNK_BYTES):
+                    destino.write(bloque)
+                    yield buffer.tomar()
+            yield buffer.tomar()
+    yield buffer.tomar()

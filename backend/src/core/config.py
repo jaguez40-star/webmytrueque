@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     google_redirect_uri: str = "http://localhost:8000/auth/google/callback"
     frontend_url: str = "http://localhost:5173"
 
+    # --- Administración ---
+    # Correo de la ÚNICA cuenta que ve el panel de almacenamiento. Vacío = nadie, que es
+    # el valor correcto en cualquier entorno donde no haga falta. No es un secreto, pero
+    # vive en el .env como el resto de la configuración del despliegue.
+    admin_email: str = ""
+
     # --- Custodia de archivos ---
     # Relativa como `database_url`: el backend SIEMPRE se levanta desde backend/.
     custodia_dir: str = "./data/custodia"
@@ -33,6 +39,11 @@ class Settings(BaseSettings):
     @property
     def custodia_path(self) -> Path:
         return Path(self.custodia_dir)
+
+    def es_admin(self, correo: str) -> bool:
+        """Sin `admin_email` configurado NADIE es admin: un fallo de config no abre la puerta."""
+        objetivo = self.admin_email.strip().lower()
+        return bool(objetivo) and correo.strip().lower() == objetivo
 
 
 @lru_cache

@@ -131,6 +131,171 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/orders/{orden_id}/autorizacion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Autorizar
+         * @description El interruptor "Autorizo descarga" del vendedor. Idempotente: manda el estado que quiere.
+         */
+        put: operations["autorizar_orders__orden_id__autorizacion_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orden_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Purgar
+         * @description El vendedor borra los archivos de su orden. El comprador no puede: no son suyos.
+         */
+        delete: operations["purgar_orders__orden_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orden_id}/archivos/{archivo_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Descargar
+         * @description Descarga un archivo de la orden. Solo el comprador, y solo si el vendedor autorizó.
+         */
+        get: operations["descargar_orders__orden_id__archivos__archivo_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Purgar Uno
+         * @description El vendedor borra UN archivo de su orden. Los demás siguen en custodia.
+         */
+        delete: operations["purgar_uno_orders__orden_id__archivos__archivo_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/almacenamiento": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Almacenamiento
+         * @description Disco, órdenes y lo que sobra. Es la única vista que cruza la base con el disco.
+         */
+        get: operations["almacenamiento_admin_almacenamiento_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/ordenes/{orden_id}/zip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Descargar Orden
+         * @description Backup de una orden como ZIP, generado al vuelo.
+         *
+         *     🔴 En flujo y no en un fichero temporal: el servidor tiene ~2,9 GB libres y el tope por
+         *     orden es 1 GB — escribir el ZIP antes de mandarlo dejaría el disco al borde.
+         */
+        get: operations["descargar_orden_admin_ordenes__orden_id__zip_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/ordenes/{orden_id}/archivos/{archivo_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Descargar Archivo */
+        get: operations["descargar_archivo_admin_ordenes__orden_id__archivos__archivo_id__get"];
+        put?: never;
+        post?: never;
+        /** Purgar Archivo Admin */
+        delete: operations["purgar_archivo_admin_admin_ordenes__orden_id__archivos__archivo_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/ordenes/{orden_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Purgar Orden Admin
+         * @description Borra los archivos de una orden. Devuelve el resumen ya actualizado.
+         */
+        delete: operations["purgar_orden_admin_admin_ordenes__orden_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/huerfanos/{nombre}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Purgar Huerfano
+         * @description Borra una carpeta del disco que no corresponde a ninguna orden.
+         */
+        delete: operations["purgar_huerfano_admin_huerfanos__nombre__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -152,6 +317,35 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AlmacenamientoOut */
+        AlmacenamientoOut: {
+            /** Discototalbytes */
+            discoTotalBytes: number;
+            /** Discolibrebytes */
+            discoLibreBytes: number;
+            /** Custodiabytes */
+            custodiaBytes: number;
+            /** Ordenes */
+            ordenes: components["schemas"]["OrdenAdminOut"][];
+            /** Huerfanos */
+            huerfanos: components["schemas"]["HuerfanoOut"][];
+        };
+        /** ArchivoAdminOut */
+        ArchivoAdminOut: {
+            /** Id */
+            id: string;
+            /** Nombre */
+            nombre: string;
+            /** Bytes */
+            bytes: number;
+            /** Endisco */
+            enDisco: boolean;
+        };
+        /** AutorizacionIn */
+        AutorizacionIn: {
+            /** Autorizado */
+            autorizado: boolean;
+        };
         /** Body_crear_orders_post */
         Body_crear_orders_post: {
             /** Comprador */
@@ -175,6 +369,21 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * HuerfanoOut
+         * @description Una carpeta que está en el disco y no le corresponde ninguna orden.
+         *
+         *     Puede quedar si un rollback falla a mitad de una subida. Nadie la ve desde la app y
+         *     nadie la borra: ocupa disco para siempre hasta que alguien mire.
+         */
+        HuerfanoOut: {
+            /** Nombre */
+            nombre: string;
+            /** Bytes */
+            bytes: number;
+            /** Archivos */
+            archivos: number;
+        };
         /** LoginIn */
         LoginIn: {
             /**
@@ -185,8 +394,29 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** OrdenAdminOut */
+        OrdenAdminOut: {
+            /** Id */
+            id: string;
+            /** Estado */
+            estado: string;
+            /** Vendedor */
+            vendedor: string;
+            /** Comprador */
+            comprador: string;
+            /** Creadaen */
+            creadaEn: string | null;
+            /** Purgaen */
+            purgaEn: string | null;
+            /** Bytesendisco */
+            bytesEnDisco: number;
+            /** Archivos */
+            archivos: components["schemas"]["ArchivoAdminOut"][];
+        };
         /** OrderFileOut */
         OrderFileOut: {
+            /** Id */
+            id: string;
             /** Nombre */
             nombre: string;
             /** Extension */
@@ -217,6 +447,8 @@ export interface components {
             liberaAutomaticaEn: string | null;
             /** Purgaen */
             purgaEn: string | null;
+            /** Descargadoen */
+            descargadoEn?: string | null;
             /** Comprobante */
             comprobante?: null;
         };
@@ -236,6 +468,11 @@ export interface components {
             email: string;
             /** Handle */
             handle: string;
+            /**
+             * Esadmin
+             * @default false
+             */
+            esAdmin: boolean;
         };
         /** ValidationError */
         ValidationError: {
@@ -480,6 +717,342 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    autorizar_orders__orden_id__autorizacion_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AutorizacionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    purgar_orders__orden_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    descargar_orders__orden_id__archivos__archivo_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+                archivo_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    purgar_uno_orders__orden_id__archivos__archivo_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+                archivo_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    almacenamiento_admin_almacenamiento_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlmacenamientoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    descargar_orden_admin_ordenes__orden_id__zip_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    descargar_archivo_admin_ordenes__orden_id__archivos__archivo_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+                archivo_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    purgar_archivo_admin_admin_ordenes__orden_id__archivos__archivo_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+                archivo_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlmacenamientoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    purgar_orden_admin_admin_ordenes__orden_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orden_id: number;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlmacenamientoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    purgar_huerfano_admin_huerfanos__nombre__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                nombre: string;
+            };
+            cookie?: {
+                trueque_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlmacenamientoOut"];
                 };
             };
             /** @description Validation Error */

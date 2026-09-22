@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Copy, LogOut, Share2, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Check, Copy, HardDrive, LogOut, Share2, X } from 'lucide-react'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useLogoutMutation } from '@/features/auth/hooks/useAuthMutations'
 import { useCompartirUsuario } from '../../hooks/useCompartirUsuario'
@@ -115,6 +116,22 @@ export function MenuCuenta() {
               </button>
             )}
           </div>
+
+          {/* Solo para la cuenta administradora. El `esAdmin` viene de /auth/me y sirve
+              únicamente para enseñar u ocultar esto: el permiso lo comprueba el backend en
+              cada petición, así que forzarlo desde el navegador solo lleva a un 404. */}
+          {user?.esAdmin && (
+            <Link
+              to="/panel/admin"
+              className={styles.admin}
+              // Sin `role="menuitem"`: sustituiría el rol nativo de enlace, que es lo que
+              // dice que esto NAVEGA. Los demás controles del menú tampoco lo llevan.
+              onClick={() => setAbierto(false)}
+            >
+              <HardDrive size={18} aria-hidden="true" />
+              Almacenamiento
+            </Link>
+          )}
 
           <button
             type="button"

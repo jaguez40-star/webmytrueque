@@ -77,7 +77,11 @@ def test_me_no_expone_el_hash_de_password(client: TestClient) -> None:
     """Regla no negociable 7: password_hash nunca sale en una respuesta."""
     client.post("/auth/register", json=CREDENTIALS)
     r = client.get("/auth/me")
-    assert set(r.json().keys()) == {"email", "handle"}
+    # Conjunto EXACTO, no "no contiene password_hash": así cualquier campo nuevo obliga a
+    # pasar por aquí y decidir a conciencia que puede salir.
+    assert set(r.json().keys()) == {"email", "handle", "esAdmin"}
+    # Y una cuenta corriente no es administradora.
+    assert r.json()["esAdmin"] is False
 
 
 def test_logout_borra_la_cookie(client: TestClient) -> None:

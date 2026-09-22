@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from src.core.config import get_settings
+from src.features.admin.api import router as admin_router
 from src.features.auth.api import router as auth_router
 from src.features.orders.api import router as orders_router
 
@@ -59,6 +60,7 @@ async def limitar_tamano_de_subida(
 
 app.include_router(auth_router)
 app.include_router(orders_router)
+app.include_router(admin_router)
 
 
 @app.get("/health")

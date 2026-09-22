@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from src.core.config import get_settings
 from src.core.db import get_db
 from src.core.security import SESSION_COOKIE_NAME, read_session_token
 from src.features.auth.models import User
@@ -24,4 +25,16 @@ def get_current_user(
     user = db.get(User, user_id)
     if user is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "El usuario ya no existe.")
+    return user
+
+
+def get_admin_user(user: Annotated[User, Depends(get_current_user)]) -> User:
+    """El usuario en sesión, solo si es EL administrador.
+
+    🔴 Responde 404 y no 403 a cualquier otro: un 403 confirma que el panel existe y que
+    solo falta ser alguien concreto, que es justo la pista que no queremos dar sobre la
+    única pantalla capaz de leer los archivos de todo el mundo.
+    """
+    if not get_settings().es_admin(user.email):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "No encontrado.")
     return user

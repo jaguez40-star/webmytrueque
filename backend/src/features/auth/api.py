@@ -44,18 +44,31 @@ def _set_session_cookie(response: Response, user_id: int) -> None:
     )
 
 
+def _salida(user: User) -> UserOut:
+    """Traduce el usuario al contrato público, resolviendo si es el administrador.
+
+    El modelo no guarda roles: el admin es un correo del `.env`, así que la respuesta se
+    arma aquí en vez de leerse de la fila.
+    """
+    return UserOut(
+        email=user.email,
+        handle=user.handle,
+        esAdmin=get_settings().es_admin(user.email),
+    )
+
+
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterIn, response: Response, db: DbDep) -> User:
+def register(payload: RegisterIn, response: Response, db: DbDep) -> UserOut:
     try:
         user = register_user(db, payload)
     except EmailAlreadyRegisteredError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, "Ese correo ya está registrado.") from exc
     _set_session_cookie(response, user.id)
-    return user
+    return _salida(user)
 
 
 @router.post("/login", response_model=UserOut)
-def login(payload: LoginIn, response: Response, db: DbDep) -> User:
+def login(payload: LoginIn, response: Response, db: DbDep) -> UserOut:
     try:
         user = authenticate_user(db, payload.email, payload.password)
     except InvalidCredentialsError as exc:
@@ -63,7 +76,7 @@ def login(payload: LoginIn, response: Response, db: DbDep) -> User:
             status.HTTP_401_UNAUTHORIZED, "Correo o contraseña incorrectos."
         ) from exc
     _set_session_cookie(response, user.id)
-    return user
+    return _salida(user)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -72,8 +85,8 @@ def logout(response: Response) -> None:
 
 
 @router.get("/me", response_model=UserOut)
-def me(user: Annotated[User, Depends(get_current_user)]) -> User:
-    return user
+def me(user: Annotated[User, Depends(get_current_user)]) -> UserOut:
+    return _salida(user)
 
 
 @router.get("/google")
