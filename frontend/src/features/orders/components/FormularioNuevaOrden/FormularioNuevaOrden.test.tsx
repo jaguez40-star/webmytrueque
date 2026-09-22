@@ -93,14 +93,14 @@ describe('FormularioNuevaOrden — selección de archivos', () => {
     expect(screen.getByText(/1 archivo · 1 KB/)).toBeInTheDocument()
   })
 
-  it('los campos de comprador y monto son editables', async () => {
+  it('el campo del comprador es editable, y ya no hay campo de monto', async () => {
     const user = userEvent.setup()
     montar()
 
     await user.type(screen.getByLabelText('@usuario del comprador'), '@trq-abcd')
-    await user.type(screen.getByLabelText('Monto en COP'), '450000')
 
     expect(screen.getByLabelText('@usuario del comprador')).toHaveValue('@trq-abcd')
-    expect(screen.getByLabelText('Monto en COP')).toHaveValue('450000')
+    expect(screen.queryByLabelText('Monto en COP')).not.toBeInTheDocument()
+    expect(screen.queryByText(/Cuánto acordaron/)).not.toBeInTheDocument()
   })
 })

@@ -6,14 +6,12 @@ export const LIMITE_BYTES = 1024 ** 3
 interface EstadoNuevaOrden {
   archivos: File[]
   comprador: string
-  monto: string
   error: string | null
   enviando: boolean
   progreso: number
   agregarArchivos: (nuevos: File[]) => void
   quitarArchivo: (indice: number) => void
   setComprador: (valor: string) => void
-  setMonto: (valor: string) => void
   setError: (valor: string | null) => void
   setEnviando: (valor: boolean) => void
   setProgreso: (valor: number) => void

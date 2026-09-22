@@ -15,19 +15,20 @@ beforeAll(() => {
 })
 
 describe('ModalNuevaOrden', () => {
-  it('lleva dentro los tres pasos del formulario', () => {
+  it('lleva dentro los dos pasos del formulario', () => {
     renderConWrappers(<ModalNuevaOrden />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel/nueva' })
 
     expect(screen.getByRole('heading', { name: 'Vender file(s)' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Selección' })).toBeInTheDocument()
     expect(screen.getByLabelText('@usuario del comprador')).toBeInTheDocument()
-    expect(screen.getByLabelText('Monto en COP')).toBeInTheDocument()
+    // El monto se quitó: el dinero nunca pasa por la plataforma, así que la cifra no
+    // gobernaba ninguna decisión del sistema.
+    expect(screen.queryByLabelText('Monto en COP')).not.toBeInTheDocument()
   })
 
   it('los inputs van a 16px, para que iOS no haga zoom al enfocarlos', () => {
     renderConWrappers(<ModalNuevaOrden />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel/nueva' })
     expect(screen.getByLabelText('@usuario del comprador').className).toContain('campo')
-    expect(screen.getByLabelText('Monto en COP').className).toContain('campo')
   })
 
   it('el botón de envío arranca deshabilitado: sin archivos no hay orden', () => {

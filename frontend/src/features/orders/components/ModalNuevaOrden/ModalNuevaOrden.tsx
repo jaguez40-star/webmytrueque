@@ -24,18 +24,18 @@ export function ModalNuevaOrden() {
 
 function ContenidoModal() {
   const navigate = useNavigate()
-  const { archivos, comprador, monto, enviando, setEnviando, setProgreso, setError } =
+  const { archivos, comprador, enviando, setEnviando, setProgreso, setError } =
     useNuevaOrden()
   const mutacion = useCrearOrden(setProgreso)
 
-  const puedeEnviar = archivos.length > 0 && comprador.trim() !== '' && monto.trim() !== ''
+  const puedeEnviar = archivos.length > 0 && comprador.trim() !== ''
 
   function enviar() {
     setError(null)
     setEnviando(true)
     setProgreso(0)
     mutacion.mutate(
-      { archivos, comprador, monto },
+      { archivos, comprador },
       {
         onSuccess: () => {
           setEnviando(false)
@@ -52,7 +52,7 @@ function ContenidoModal() {
   return (
     <Modal
       titulo="Vender file(s)"
-      subtitulo="Tres datos y queda en custodia. El comprador lo verá en su panel."
+      subtitulo="Dos datos y queda en custodia. El comprador lo verá en su panel."
       // Mientras sube no se cierra: cerrar desmonta el componente y aborta la petición
       // a medias, dejando archivos a medio escribir en el servidor.
       onCerrar={() => {

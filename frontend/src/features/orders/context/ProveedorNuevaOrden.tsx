@@ -32,7 +32,6 @@ function formatearPesoLocal(bytes: number): string {
 export function ProveedorNuevaOrden({ children }: { children: ReactNode }) {
   const [archivos, setArchivos] = useState<File[]>([])
   const [comprador, setComprador] = useState('')
-  const [monto, setMonto] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
   const [progreso, setProgreso] = useState(0)
@@ -67,7 +66,6 @@ export function ProveedorNuevaOrden({ children }: { children: ReactNode }) {
   const limpiar = useCallback(() => {
     setArchivos([])
     setComprador('')
-    setMonto('')
     setError(null)
     setEnviando(false)
     setProgreso(0)
@@ -77,20 +75,18 @@ export function ProveedorNuevaOrden({ children }: { children: ReactNode }) {
     () => ({
       archivos,
       comprador,
-      monto,
       error,
       enviando,
       progreso,
       agregarArchivos,
       quitarArchivo,
       setComprador,
-      setMonto,
       setError,
       setEnviando,
       setProgreso,
       limpiar,
     }),
-    [archivos, comprador, monto, error, enviando, progreso, agregarArchivos, quitarArchivo, limpiar],
+    [archivos, comprador, error, enviando, progreso, agregarArchivos, quitarArchivo, limpiar],
   )
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>

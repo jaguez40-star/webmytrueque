@@ -24,18 +24,18 @@ export function NuevaOrdenPage() {
 
 function ContenidoPagina() {
   const navigate = useNavigate()
-  const { archivos, comprador, monto, enviando, setEnviando, setProgreso, setError } =
+  const { archivos, comprador, enviando, setEnviando, setProgreso, setError } =
     useNuevaOrden()
   const mutacion = useCrearOrden(setProgreso)
 
-  const puedeEnviar = archivos.length > 0 && comprador.trim() !== '' && monto.trim() !== ''
+  const puedeEnviar = archivos.length > 0 && comprador.trim() !== ''
 
   function enviar() {
     setError(null)
     setEnviando(true)
     setProgreso(0)
     mutacion.mutate(
-      { archivos, comprador, monto },
+      { archivos, comprador },
       {
         onSuccess: () => {
           setEnviando(false)
@@ -75,7 +75,7 @@ function ContenidoPagina() {
     >
       <h1 className={styles.titulo}>Vender file(s)</h1>
       <p className={styles.subtitulo}>
-        Tres datos y queda en custodia. El comprador lo verá en su panel.
+        Dos datos y queda en custodia. El comprador lo verá en su panel.
       </p>
 
       <div className={styles.formulario}>

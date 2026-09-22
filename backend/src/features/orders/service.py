@@ -74,14 +74,18 @@ class ArchivoNoEncontradoError(Exception):
 
 
 def _parsear_monto(monto_bruto: str) -> int:
-    """'450.000' o '450000' -> 450000. El frontend manda el texto tal cual se escribió."""
+    """'450.000' o '450000' -> 450000. Vacío -> 0.
+
+    El formulario dejó de pedir el monto: el dinero no pasa por la plataforma, así que la
+    cifra no gobernaba ninguna decisión del sistema. Se sigue aceptando si alguien lo
+    manda —y se sigue rechazando si es basura—, pero su ausencia ya no es un error.
+    """
     limpio = monto_bruto.replace(".", "").replace(",", "").replace(" ", "").strip()
+    if not limpio:
+        return 0
     if not limpio.isdigit():
         raise MontoInvalidoError
-    monto = int(limpio)
-    if monto <= 0:
-        raise MontoInvalidoError
-    return monto
+    return int(limpio)
 
 
 def crear_orden(

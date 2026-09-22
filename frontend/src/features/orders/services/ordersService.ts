@@ -6,7 +6,6 @@ const BASE = import.meta.env.PROD ? '' : 'http://localhost:8000'
 export interface DatosNuevaOrden {
   archivos: File[]
   comprador: string
-  monto: string
 }
 
 /**
@@ -23,7 +22,6 @@ export function crearOrden(
   return new Promise((resolver, rechazar) => {
     const cuerpo = new FormData()
     cuerpo.append('comprador', datos.comprador)
-    cuerpo.append('monto', datos.monto)
     for (const archivo of datos.archivos) cuerpo.append('archivos', archivo)
 
     const peticion = new XMLHttpRequest()

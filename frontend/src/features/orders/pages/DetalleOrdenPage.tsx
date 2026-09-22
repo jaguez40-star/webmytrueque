@@ -21,7 +21,6 @@ import {
 } from '../types'
 import {
   fechaLegible,
-  formatearMonto,
   formatearPeso,
   haceCuanto,
   tiempoRestante,
@@ -118,13 +117,9 @@ export function DetalleOrdenPage() {
         </section>
       )}
 
+      {/* Sin el monto acordado: el formulario dejó de pedirlo, así que aquí solo saldría
+          un "$0". El dinero nunca pasó por la plataforma; la cifra era informativa. */}
       <section className={styles.tarjetaMonto}>
-        <div>
-          <span className={styles.montoEtiqueta}>ACORDADO</span>
-          <div className={styles.monto}>
-            {formatearMonto(orden.montoCop)} <span className={styles.montoMoneda}>COP</span>
-          </div>
-        </div>
         <div className={styles.contraparte}>
           <span className={styles.contraparteNombre}>{orden.contraparte.nombre}</span>
           <span className={styles.contraparteHandle}>{orden.contraparte.handle}</span>

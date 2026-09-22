@@ -143,6 +143,21 @@ def test_no_puedes_venderte_a_ti_mismo(client: TestClient) -> None:
     assert respuesta.status_code == 422
 
 
+def test_sin_monto_la_orden_se_crea_igual(client: TestClient) -> None:
+    """El formulario dejó de pedirlo: su ausencia no puede impedir una custodia."""
+    handle_comprador = _registrar(client, "sinmonto@correo.com")
+    client.post("/auth/logout")
+    _registrar(client, "sinmonto-v@correo.com")
+
+    respuesta = client.post(
+        "/orders",
+        data={"comprador": handle_comprador},
+        files=[_archivo("entrega.bin", b"datos")],
+    )
+    assert respuesta.status_code == 201
+    assert respuesta.json()["montoCop"] == 0
+
+
 def test_monto_invalido_da_422(client: TestClient) -> None:
     handle_comprador = _registrar(client, "c7@correo.com")
     client.post("/auth/logout")

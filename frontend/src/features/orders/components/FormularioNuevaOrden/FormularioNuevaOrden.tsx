@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Banknote, Check, FileText, Info, Upload, X } from 'lucide-react'
+import { Check, FileText, Info, Upload, X } from 'lucide-react'
 import { formatearPeso } from '../../utils/format'
 import { LIMITE_BYTES, useNuevaOrden } from '../../context/contextoNuevaOrden'
 import styles from './FormularioNuevaOrden.module.scss'
@@ -18,14 +18,12 @@ export function FormularioNuevaOrden() {
   const {
     archivos,
     comprador,
-    monto,
     error,
     enviando,
     progreso,
     agregarArchivos,
     quitarArchivo,
     setComprador,
-    setMonto,
   } = useNuevaOrden()
 
   const total = archivos.reduce((suma, archivo) => suma + archivo.size, 0)
@@ -154,36 +152,6 @@ export function FormularioNuevaOrden() {
         </p>
       </section>
 
-      {/* ── Paso 3 ── */}
-      <section className={styles.paso}>
-        <div className={styles.pasoCabeza}>
-          <span className={styles.pasoNumero}>3</span>
-          <h3 className={styles.pasoTitulo}>Cuánto acordaron</h3>
-        </div>
-
-        <label className={styles.etiqueta} htmlFor="monto">
-          Monto en COP
-        </label>
-        <input
-          id="monto"
-          name="monto"
-          type="text"
-          inputMode="numeric"
-          className={`${styles.campo} ${styles.campoMonto}`}
-          placeholder="0"
-          value={monto}
-          onChange={(evento) => setMonto(evento.target.value)}
-          disabled={enviando}
-        />
-
-        <p className={styles.avisoDinero}>
-          <Banknote size={17} aria-hidden="true" />
-          <span>
-            Te transfiere <strong>directo a tu cuenta</strong>. MyTrueque no cobra, no
-            retiene y no puede devolver ese dinero.
-          </span>
-        </p>
-      </section>
     </>
   )
 }

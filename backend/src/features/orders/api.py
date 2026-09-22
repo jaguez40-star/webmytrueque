@@ -46,8 +46,12 @@ def crear(
     db: DbDep,
     usuario: UsuarioDep,
     comprador: Annotated[str, Form()],
-    monto: Annotated[str, Form()],
     archivos: Annotated[list[UploadFile], File()],
+    # Opcional, y va al final porque un parámetro con valor por defecto no puede preceder
+    # a uno sin él. El formulario dejó de pedir el monto: el dinero nunca pasa por aquí,
+    # así que la cifra no gobernaba ninguna decisión. Se sigue aceptando si alguien lo
+    # manda, porque la columna existe y hay órdenes viejas que lo tienen.
+    monto: Annotated[str, Form()] = "",
 ) -> OrderOut:
     try:
         orden = crear_orden(db, usuario, comprador, monto, archivos)
