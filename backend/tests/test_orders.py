@@ -426,3 +426,79 @@ def test_purgar_conserva_el_rastro_de_que_hubo(client: TestClient) -> None:
     purgada = client.delete(f"/orders/{orden_id}").json()
     assert purgada["archivos"][0]["nombre"] == "entrega.bin"
     assert len(purgada["archivos"][0]["hash"]) == 64
+
+
+def _crear_orden_de_tres(client: TestClient, comprador: str, vendedor: str) -> str:
+    """Una orden con tres archivos distintos. Deja la sesión abierta como VENDEDOR."""
+    handle = _registrar(client, comprador)
+    client.post("/auth/logout")
+    _registrar(client, vendedor)
+    respuesta = client.post(
+        "/orders",
+        data={"comprador": handle, "monto": "10000"},
+        files=[
+            _archivo("uno.png", b"aaa"),
+            _archivo("dos.png", b"bbbb"),
+            _archivo("tres.png", b"ccccc"),
+        ],
+    )
+    assert respuesta.status_code == 201
+    return str(respuesta.json()["id"])
+
+
+def test_el_vendedor_borra_un_solo_archivo_y_los_demas_siguen(client: TestClient) -> None:
+    orden_id = _crear_orden_de_tres(client, "c33@correo.com", "v33@correo.com")
+    archivos = client.get("/orders").json()[0]["archivos"]
+    carpeta = get_settings().custodia_path / orden_id
+
+    respuesta = client.delete(f"/orders/{orden_id}/archivos/{archivos[1]['id']}")
+    assert respuesta.status_code == 200
+
+    quedan = respuesta.json()["archivos"]
+    assert [a["nombre"] for a in quedan] == ["uno.png", "tres.png"]
+    # En disco queda exactamente uno menos, y la orden sigue viva.
+    assert len(list(carpeta.iterdir())) == 2
+    assert respuesta.json()["estado"] == "EN_CUSTODIA"
+
+
+def test_borrar_el_ultimo_archivo_purga_la_orden(client: TestClient) -> None:
+    """Sin archivos no hay nada que custodiar: la orden no se queda a medias."""
+    orden_id = _crear_orden_entre(client, "c34@correo.com", "v34@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+
+    respuesta = client.delete(f"/orders/{orden_id}/archivos/{archivo_id}")
+    assert respuesta.status_code == 200
+    assert respuesta.json()["estado"] == "PURGADO"
+    assert not (get_settings().custodia_path / orden_id).exists()
+
+
+def test_el_comprador_no_puede_borrar_un_archivo_suelto(client: TestClient) -> None:
+    orden_id = _crear_orden_de_tres(client, "c35@correo.com", "v35@correo.com")
+    archivo_id = client.get("/orders").json()[0]["archivos"][0]["id"]
+    _entrar(client, "c35@correo.com")
+
+    assert client.delete(f"/orders/{orden_id}/archivos/{archivo_id}").status_code == 404
+    assert len(list((get_settings().custodia_path / orden_id).iterdir())) == 3
+
+
+def test_no_se_puede_borrar_un_archivo_de_otra_orden(client: TestClient) -> None:
+    """El id del archivo no basta: tiene que pertenecer a la orden de la URL."""
+    ajena = _crear_orden_de_tres(client, "c36@correo.com", "v36@correo.com")
+    archivo_ajeno = client.get("/orders").json()[0]["archivos"][0]["id"]
+    client.post("/auth/logout")
+    propia = _crear_orden_de_tres(client, "c37@correo.com", "v37@correo.com")
+
+    assert client.delete(f"/orders/{propia}/archivos/{archivo_ajeno}").status_code == 404
+    assert len(list((get_settings().custodia_path / ajena).iterdir())) == 3
+
+
+def test_tras_borrar_un_archivo_el_comprador_no_puede_descargarlo(client: TestClient) -> None:
+    orden_id = _crear_orden_de_tres(client, "c38@correo.com", "v38@correo.com")
+    archivos = client.get("/orders").json()[0]["archivos"]
+    client.put(f"/orders/{orden_id}/autorizacion", json={"autorizado": True})
+    client.delete(f"/orders/{orden_id}/archivos/{archivos[0]['id']}")
+
+    _entrar(client, "c38@correo.com")
+    assert client.get(f"/orders/{orden_id}/archivos/{archivos[0]['id']}").status_code == 404
+    # Y los que quedan se siguen pudiendo bajar.
+    assert client.get(f"/orders/{orden_id}/archivos/{archivos[1]['id']}").status_code == 200

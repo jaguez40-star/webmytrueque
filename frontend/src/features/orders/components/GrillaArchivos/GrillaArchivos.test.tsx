@@ -69,10 +69,18 @@ describe('GrillaArchivos — rol vendedor', () => {
       usuario: USUARIO_DE_PRUEBA,
     })
 
-    const tile = screen.getByText('entrega-final-branding.zip').closest('a')
-    expect(tile).toHaveAttribute('href', '/panel/orden/4821')
-    expect(tile).toHaveTextContent('240,4 MB')
-    expect(tile).toHaveTextContent('para @trq-4f7k')
+    // `closest('ul')` es la lista de archivos; su padre es la tarjeta de la orden. No se
+    // busca por clase: CSS Modules las convierte en hashes.
+    const tarjeta = screen.getByText('entrega-final-branding.zip').closest('ul')?.parentElement
+    expect(tarjeta).toHaveTextContent('240,4 MB')
+    expect(tarjeta).toHaveTextContent('para @trq-4f7k')
+    // El detalle vive en un enlace explícito del pie: la tarjeta entera ya no es un <a>,
+    // porque cada archivo lleva su propia papelera y un botón dentro de un enlace es
+    // HTML inválido.
+    expect(screen.getAllByRole('link', { name: 'Ver detalle' })[0]).toHaveAttribute(
+      'href',
+      '/panel/orden/4821',
+    )
   })
 
   it('una orden de un solo archivo usa el MISMO formato que una de varios', () => {
@@ -84,7 +92,7 @@ describe('GrillaArchivos — rol vendedor', () => {
     })
 
     expect(screen.getByText('1 ARCHIVO')).toBeInTheDocument()
-    const tarjeta = screen.getByText('foto-portada.png').closest('a')
+    const tarjeta = screen.getByText('foto-portada.png').closest('ul')?.parentElement
     expect(tarjeta).toHaveTextContent('78 KB')
     expect(tarjeta).toHaveTextContent('para @trq-be4r')
   })
@@ -99,8 +107,11 @@ describe('GrillaArchivos — rol vendedor', () => {
     expect(screen.getByText('foto-detalle.png')).toBeInTheDocument()
     expect(screen.getByText('ficha-tecnica.pdf')).toBeInTheDocument()
 
-    const tarjeta = screen.getByText('foto-portada.png').closest('a')
-    expect(tarjeta).toHaveAttribute('href', '/panel/orden/9001')
+    const tarjeta = screen.getByText('foto-portada.png').closest('ul')?.parentElement
+    expect(screen.getByRole('link', { name: 'Ver detalle' })).toHaveAttribute(
+      'href',
+      '/panel/orden/9001',
+    )
     // Cada tipo de archivo aparece (PNG dos veces, PDF una), como etiqueta por fila.
     expect(screen.getAllByText('PNG')).toHaveLength(2)
     expect(screen.getByText('PDF')).toBeInTheDocument()
@@ -139,7 +150,9 @@ describe('GrillaArchivos — rol comprador', () => {
     // Lo que uno vende no aparece aquí.
     expect(screen.queryByText('entrega-final-branding.zip')).not.toBeInTheDocument()
 
-    const tile = screen.getByText('masterclass-fotografia.mp4').closest('a')
-    expect(tile).toHaveTextContent('de @trq-9k2f')
+    const tarjeta = screen
+      .getByText('masterclass-fotografia.mp4')
+      .closest('ul')?.parentElement
+    expect(tarjeta).toHaveTextContent('de @trq-9k2f')
   })
 })

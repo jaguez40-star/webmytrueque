@@ -147,3 +147,24 @@ export async function purgarOrden(ordenId: string): Promise<Order> {
   }
   return (await respuesta.json()) as Order
 }
+
+/**
+ * El vendedor borra UN archivo de la orden, sin tocar los demás.
+ *
+ * Devuelve la orden ya sin ese archivo. Si era el último, vuelve en estado PURGADO: no
+ * queda nada que custodiar.
+ */
+export async function purgarArchivo(ordenId: string, archivoId: string): Promise<Order> {
+  const respuesta = await fetch(`${BASE}/orders/${ordenId}/archivos/${archivoId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!respuesta.ok) {
+    const detalle = await respuesta
+      .json()
+      .then((c: { detail?: unknown }) => (typeof c.detail === 'string' ? c.detail : null))
+      .catch(() => null)
+    throw new Error(detalle ?? 'No se pudo borrar el archivo.')
+  }
+  return (await respuesta.json()) as Order
+}

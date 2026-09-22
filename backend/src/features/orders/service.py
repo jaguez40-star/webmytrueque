@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from src.core.config import get_settings
 from src.core.storage import (
+    borrar_archivo,
     borrar_carpeta,
     extension_de,
     guardar_archivo,
@@ -232,6 +233,42 @@ def purgar_orden(db: Session, orden_id: int, vendedor: User) -> Order:
 
     borrar_carpeta(get_settings().custodia_path / str(orden.id))
     orden.state = "PURGADO"
+    db.commit()
+    db.refresh(orden)
+    return orden
+
+
+def purgar_archivo(db: Session, orden_id: int, archivo_id: int, vendedor: User) -> Order:
+    """El vendedor borra UN archivo de su orden, sin tocar los demás.
+
+    Una orden puede llevar varios archivos y no todos envejecen igual: se decidió que el
+    vendedor pueda quitar uno suelto en vez de tener que purgar la orden entera.
+
+    Aquí SÍ se borra la fila de `order_files`, al revés que en `purgar_orden()`: sin fila,
+    el archivo deja de existir para el contrato, y no hay estado "purgado" por archivo que
+    permita conservar el rastro sin mentirle a la lista. Si era el último, la orden se
+    queda sin nada que custodiar y pasa a `PURGADO`.
+    """
+    orden = _buscar_orden(db, orden_id)
+    if orden.seller_id != vendedor.id:
+        raise NoEresElVendedorError
+
+    archivo = db.get(OrderFile, archivo_id)
+    if archivo is None or archivo.order_id != orden.id:
+        raise ArchivoNoEncontradoError
+
+    carpeta = get_settings().custodia_path / str(orden.id)
+    borrar_archivo(carpeta / archivo.stored_name)
+    db.delete(archivo)
+    db.flush()
+
+    quedan = db.scalar(
+        select(func.count()).select_from(OrderFile).where(OrderFile.order_id == orden.id)
+    )
+    if not quedan:
+        borrar_carpeta(carpeta)
+        orden.state = "PURGADO"
+
     db.commit()
     db.refresh(orden)
     return orden

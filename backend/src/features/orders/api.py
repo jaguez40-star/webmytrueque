@@ -26,6 +26,7 @@ from src.features.orders.service import (
     cambiar_autorizacion,
     crear_orden,
     listar_ordenes,
+    purgar_archivo,
     purgar_orden,
     serializar_lote,
     serializar_orden,
@@ -121,6 +122,21 @@ def purgar(orden_id: int, db: DbDep, usuario: UsuarioDep) -> OrderOut:
         # 404 también para el comprador: quien no vende esta orden no la puede tocar, y un
         # 403 confirmaría que existe.
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Esa orden no existe.") from exc
+
+    return serializar_orden(db, orden, usuario)
+
+
+@router.delete("/{orden_id}/archivos/{archivo_id}", response_model=OrderOut)
+def purgar_uno(orden_id: int, archivo_id: int, db: DbDep, usuario: UsuarioDep) -> OrderOut:
+    """El vendedor borra UN archivo de su orden. Los demás siguen en custodia."""
+    try:
+        orden = purgar_archivo(db, orden_id, archivo_id, usuario)
+    except (
+        OrdenNoEncontradaError,
+        NoEresElVendedorError,
+        ArchivoNoEncontradoError,
+    ) as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ese archivo no existe.") from exc
 
     return serializar_orden(db, orden, usuario)
 

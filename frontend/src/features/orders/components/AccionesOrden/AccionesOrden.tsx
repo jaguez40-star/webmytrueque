@@ -93,7 +93,7 @@ function BotonPurgar({ orden }: { orden: Order }) {
         onClick={() => { setConfirmando(true) }}
       >
         <Trash2 size={14} aria-hidden="true" />
-        Borrar
+        Borrar todo
       </button>
     )
   }
@@ -101,7 +101,7 @@ function BotonPurgar({ orden }: { orden: Order }) {
   return (
     <div className={styles.confirmacion}>
       <span className={styles.confirmacionTexto}>
-        Se borran para siempre y el comprador deja de verlos.
+        Se borran TODOS para siempre y el comprador deja de verlos.
       </span>
       <div className={styles.confirmacionBotones}>
         <button

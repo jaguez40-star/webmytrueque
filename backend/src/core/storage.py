@@ -73,3 +73,8 @@ def guardar_archivo(subida: UploadFile, destino_dir: Path) -> tuple[str, int, st
 def borrar_carpeta(directorio: Path) -> None:
     """Borra la carpeta de una orden. No falla si no existe."""
     shutil.rmtree(directorio, ignore_errors=True)
+
+
+def borrar_archivo(ruta: Path) -> None:
+    """Borra un archivo suelto de una orden. No falla si ya no está."""
+    ruta.unlink(missing_ok=True)

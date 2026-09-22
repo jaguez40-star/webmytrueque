@@ -56,10 +56,27 @@
   }
 }
 
-.enlace {
+.pie {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.verDetalle {
+  @include objetivo-tactil(32px);
+  display: inline-flex;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-accent-text);
   text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .tileTop {
@@ -84,8 +101,6 @@
   font-size: 10.5px;
   line-height: 1.4;
   color: var(--c-text-muted);
-  margin-top: auto;
-  padding-top: 8px;
   overflow-wrap: anywhere;
 }
 
@@ -102,11 +117,79 @@
 
 .filaArchivo {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 9px;
   padding: 8px 10px;
   background: var(--c-bg);
   border-radius: 9px;
+}
+
+/* ── Borrar un archivo suelto (solo el vendedor) ── */
+
+// 32px y no 44: va DENTRO de una fila de 38px de alto, y estirarla a 44 por cada archivo
+// convierte una orden de cinco en media pantalla de scroll. El área real con el padding
+// queda en 32x32, aceptable para un icono secundario que además pide confirmación.
+.filaBorrar {
+  @include objetivo-tactil(32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--c-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--c-surface);
+    color: var(--c-alert);
+  }
+}
+
+.filaConfirma {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+
+.filaBorrarYa {
+  @include objetivo-tactil(32px);
+  padding: 0 10px;
+  background: var(--c-alert);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.filaCancelar {
+  @include objetivo-tactil(32px);
+  padding: 0 10px;
+  background: var(--c-surface);
+  color: var(--c-text-secondary);
+  border: 1px solid var(--c-border-strong);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filaError {
+  flex: 1 1 100%;
+  font-size: 11px;
+  color: var(--c-alert);
 }
 
 .filaArchivoExt {

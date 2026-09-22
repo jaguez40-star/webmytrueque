@@ -15,11 +15,13 @@ import { renderConWrappers, USUARIO_DE_PRUEBA } from '@/test/renderConWrappers'
 const autorizarDescarga = vi.fn()
 const descargarArchivo = vi.fn()
 const purgarOrden = vi.fn()
+const purgarArchivo = vi.fn()
 
 vi.mock('../../services/ordersService', () => ({
   autorizarDescarga: (...args: unknown[]) => autorizarDescarga(...args),
   descargarArchivo: (...args: unknown[]) => descargarArchivo(...args),
   purgarOrden: (...args: unknown[]) => purgarOrden(...args),
+  purgarArchivo: (...args: unknown[]) => purgarArchivo(...args),
   obtenerOrdenes: () => Promise.resolve([]),
 }))
 
@@ -52,6 +54,7 @@ beforeEach(() => {
   autorizarDescarga.mockReset().mockResolvedValue(orden('LIBERADO'))
   descargarArchivo.mockReset().mockResolvedValue(undefined)
   purgarOrden.mockReset().mockResolvedValue(orden('PURGADO'))
+  purgarArchivo.mockReset().mockResolvedValue(orden('PURGADO'))
 })
 
 describe('Vendedor — switch "Autorizo Descarga!"', () => {
@@ -103,12 +106,10 @@ describe('Vendedor — borrar los archivos', () => {
       usuario: USUARIO_DE_PRUEBA,
     })
 
-    await usuario.click(screen.getByRole('button', { name: /Borrar/ }))
+    await usuario.click(screen.getByRole('button', { name: 'Borrar todo' }))
 
     expect(purgarOrden).not.toHaveBeenCalled()
-    expect(
-      screen.getByText(/Se borran para siempre y el comprador deja de verlos/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Se borran TODOS para siempre/)).toBeInTheDocument()
   })
 
   it('al confirmar manda el borrado', async () => {
@@ -117,7 +118,7 @@ describe('Vendedor — borrar los archivos', () => {
       usuario: USUARIO_DE_PRUEBA,
     })
 
-    await usuario.click(screen.getByRole('button', { name: /^Borrar/ }))
+    await usuario.click(screen.getByRole('button', { name: 'Borrar todo' }))
     await usuario.click(screen.getByRole('button', { name: /Sí, borrar/ }))
 
     await waitFor(() => {
@@ -131,11 +132,11 @@ describe('Vendedor — borrar los archivos', () => {
       usuario: USUARIO_DE_PRUEBA,
     })
 
-    await usuario.click(screen.getByRole('button', { name: /^Borrar/ }))
+    await usuario.click(screen.getByRole('button', { name: 'Borrar todo' }))
     await usuario.click(screen.getByRole('button', { name: /Cancelar/ }))
 
     expect(purgarOrden).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: /^Borrar/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Borrar todo' })).toBeInTheDocument()
   })
 
   it('el comprador NO puede borrar lo que compró: no son sus archivos', () => {
@@ -144,6 +145,8 @@ describe('Vendedor — borrar los archivos', () => {
       usuario: USUARIO_DE_PRUEBA,
     })
     expect(screen.queryByRole('button', { name: /Borrar/ })).not.toBeInTheDocument()
+    // Tampoco la papelera de cada archivo: ninguno es suyo.
+    expect(screen.queryByRole('button', { name: /Borrar manual\.pdf/ })).not.toBeInTheDocument()
   })
 })
 

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { purgarOrden } from '../services/ordersService'
+import { purgarArchivo, purgarOrden } from '../services/ordersService'
 import { CLAVE_ORDENES } from './useOrders'
 
 /**
@@ -13,6 +13,29 @@ export function usePurgarOrden() {
 
   return useMutation({
     mutationFn: (ordenId: string) => purgarOrden(ordenId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: CLAVE_ORDENES })
+    },
+  })
+}
+
+interface VariablesArchivo {
+  ordenId: string
+  archivoId: string
+}
+
+/**
+ * Borrar UN archivo de una orden, dejando los demás en custodia.
+ *
+ * Hook aparte del de la orden entera aunque se parezcan: son dos decisiones distintas
+ * —quitar un archivo o cerrar la custodia— y mezclarlas en una mutación con un parámetro
+ * opcional haría que la pantalla tuviera que acordarse de cuál está en curso.
+ */
+export function usePurgarArchivo() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ ordenId, archivoId }: VariablesArchivo) => purgarArchivo(ordenId, archivoId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: CLAVE_ORDENES })
     },
