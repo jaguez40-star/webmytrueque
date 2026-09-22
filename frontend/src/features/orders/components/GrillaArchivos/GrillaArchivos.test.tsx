@@ -75,6 +75,20 @@ describe('GrillaArchivos — rol vendedor', () => {
     expect(tile).toHaveTextContent('para @trq-4f7k')
   })
 
+  it('una orden de un solo archivo usa el MISMO formato que una de varios', () => {
+    // Antes caía en un tile estrecho de la rejilla mientras la de tres ocupaba la fila
+    // entera: dos ventas equivalentes se veían como dos cosas distintas.
+    const unArchivo: Order = { ...ORDEN_MULTIARCHIVO, archivos: [ORDEN_MULTIARCHIVO.archivos[0]] }
+    renderConWrappers(<GrillaArchivos ordenes={[unArchivo]} rol="vendedor" />, {
+      usuario: USUARIO_DE_PRUEBA,
+    })
+
+    expect(screen.getByText('1 ARCHIVO')).toBeInTheDocument()
+    const tarjeta = screen.getByText('foto-portada.png').closest('a')
+    expect(tarjeta).toHaveTextContent('78 KB')
+    expect(tarjeta).toHaveTextContent('para @trq-be4r')
+  })
+
   it('una orden con varios archivos los lista todos, no los esconde detrás de "N archivos"', () => {
     renderConWrappers(<GrillaArchivos ordenes={[ORDEN_MULTIARCHIVO]} rol="vendedor" />, {
       usuario: USUARIO_DE_PRUEBA,

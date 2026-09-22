@@ -27,12 +27,12 @@ const COPY: Record<OrderRole, { titulo: string; vacia: string; preposicion: stri
 }
 
 /**
- * Las órdenes abiertas de un lado (venta o compra), como grilla de archivos.
+ * Las órdenes abiertas de un lado (venta o compra), una tarjeta por orden.
  *
- * NO es un catálogo: aquí no hay nada publicado ni descubrible. Cada tile es el archivo de
- * una orden propia — se deriva de las órdenes, así que no hace falta estado nuevo: un
- * archivo existe si existe su orden. Se usa dos veces en el panel, una por rol, porque el
- * mismo usuario puede tener ambas cosas a la vez: lo que vende y lo que está comprando.
+ * NO es un catálogo: aquí no hay nada publicado ni descubrible. Cada tarjeta es una orden
+ * propia — se deriva de las órdenes, así que no hace falta estado nuevo: un archivo existe
+ * si existe su orden. Se usa dos veces en el panel, una por rol, porque el mismo usuario
+ * puede tener ambas cosas a la vez: lo que vende y lo que está comprando.
  */
 export function GrillaArchivos({ ordenes, rol }: GrillaArchivosProps) {
   const copy = COPY[rol]
@@ -55,13 +55,9 @@ export function GrillaArchivos({ ordenes, rol }: GrillaArchivosProps) {
         </div>
       ) : (
         <ul className={styles.grilla}>
-          {abiertas.map((orden) =>
-            orden.archivos.length > 1 ? (
-              <TarjetaAgrupada key={orden.id} orden={orden} preposicion={copy.preposicion} rol={rol} />
-            ) : (
-              <TarjetaArchivo key={orden.id} orden={orden} preposicion={copy.preposicion} rol={rol} />
-            ),
-          )}
+          {abiertas.map((orden) => (
+            <TarjetaOrden key={orden.id} orden={orden} preposicion={copy.preposicion} rol={rol} />
+          ))}
         </ul>
       )}
     </section>
@@ -75,45 +71,26 @@ interface TarjetaProps {
   rol: OrderRole
 }
 
-/** Una orden con un solo archivo: el tile compacto de siempre, extensión + nombre + peso. */
-function TarjetaArchivo({ orden, preposicion, rol }: TarjetaProps) {
-  const archivo = orden.archivos[0]
-  if (!archivo) return null
+/**
+ * Una orden, con TODOS sus archivos listados: nombre, tipo y peso de cada uno.
+ *
+ * Mismo formato lleve uno o veinte. Antes una orden de un solo archivo caía en un tile
+ * estrecho de la grilla y una de varios ocupaba la fila entera, así que dos ventas
+ * equivalentes se veían como dos cosas distintas. La acción (autorizar / descargar) va
+ * FUERA del enlace: un control interactivo dentro de un <a> es HTML inválido y, en la
+ * práctica, un clic en el switch acabaría navegando al detalle.
+ */
+function TarjetaOrden({ orden, preposicion, rol }: TarjetaProps) {
+  const total = orden.archivos.length
 
   return (
-    // La acción va FUERA del enlace: un botón dentro de un <a> es HTML inválido y, en la
-    // práctica, un clic en el switch acabaría navegando al detalle.
-    <li className={styles.celda}>
+    <li className={styles.tarjeta}>
       <AccionesOrden orden={orden} rol={rol} />
-      <Link to={`/panel/orden/${orden.id}`} className={styles.tile}>
+      <Link to={`/panel/orden/${orden.id}`} className={styles.enlace}>
         <div className={styles.tileTop}>
           <span className={styles.extension}>
-            {archivo.extension.replace('.', '').toUpperCase()}
+            {total} {total === 1 ? 'ARCHIVO' : 'ARCHIVOS'}
           </span>
-          <StateChip estado={orden.estado} />
-        </div>
-        <span className={styles.nombre}>{archivo.nombre}</span>
-        <span className={styles.meta}>
-          {formatearPeso(archivo.bytes)} · {preposicion} {orden.contraparte.handle}
-        </span>
-      </Link>
-    </li>
-  )
-}
-
-/**
- * Una orden con varios archivos: ocupa la fila entera (no un tile pequeño) y lista cada
- * archivo por separado — nombre, tipo y peso individuales, que es justo lo que un tile de
- * "3 archivos" sin más detalle escondía. La contraparte se muestra una sola vez, al pie: es
- * la misma para todos los archivos de la orden.
- */
-function TarjetaAgrupada({ orden, preposicion, rol }: TarjetaProps) {
-  return (
-    <li className={styles.filaAncha}>
-      <AccionesOrden orden={orden} rol={rol} />
-      <Link to={`/panel/orden/${orden.id}`} className={styles.tileGrupo}>
-        <div className={styles.tileTop}>
-          <span className={styles.extension}>{orden.archivos.length} ARCHIVOS</span>
           <StateChip estado={orden.estado} />
         </div>
         <ul className={styles.listaGrupo}>

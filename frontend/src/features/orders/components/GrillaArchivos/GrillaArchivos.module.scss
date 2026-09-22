@@ -27,32 +27,22 @@
   padding: 2px 8px;
 }
 
-/* ── Grilla ── */
+/* ── Lista de órdenes ── */
 
+// Una tarjeta por fila, no una rejilla de tiles: dentro de cada tarjeta va una LISTA de
+// archivos con nombre, tipo y peso, y esa lista no cabe legible en una celda estrecha.
+// Antes una orden de un archivo caía en un tile diminuto y otra de tres ocupaba todo el
+// ancho — dos ventas iguales, dos formatos distintos.
 .grilla {
-  display: grid;
-  // Dos columnas ya en teléfono: es una grilla de archivos, no una lista. A 360px cada
-  // tile queda en ~164px, que alcanza para la extensión, dos líneas de nombre y el peso.
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
-
-  @include desde-md {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  @include desde-lg {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 
-// La tarjeta ES el <li>, no el enlace: el pie de acciones (switch / botón de descarga)
-// tiene que quedar DENTRO del recuadro pero FUERA del <a>, porque un control interactivo
-// dentro de un enlace es HTML inválido.
-.celda,
-.filaAncha {
+.tarjeta {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -66,11 +56,9 @@
   }
 }
 
-.tile {
-  @include objetivo-tactil(88px);
+.enlace {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   text-decoration: none;
 }
 
@@ -91,19 +79,6 @@
   padding: 3px 7px;
 }
 
-.nombre {
-  font-size: 13.5px;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--c-ink);
-  // Dos líneas y corta: los nombres reales son largos y descuadrarían la grilla.
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-}
-
 .meta {
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -114,19 +89,7 @@
   overflow-wrap: anywhere;
 }
 
-/* ── Orden con varios archivos ── */
-
-// Ocupa la fila entera del grid, no una celda: la lista de archivos dentro no cabría
-// legible en el ancho de un tile de 2 columnas.
-.filaAncha {
-  grid-column: 1 / -1;
-}
-
-.tileGrupo {
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-}
+/* ── Los archivos de la orden ── */
 
 .listaGrupo {
   display: flex;
