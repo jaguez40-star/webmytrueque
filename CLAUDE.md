@@ -175,17 +175,58 @@ Repositorio único con **backend y frontend como carpetas hermanas** en la raíz
 
 ```
 Trueque.com/
-├── CLAUDE.md         ← este archivo — contexto, stack, reglas de trabajo
-├── BITACORA.md        ← historial de sesiones (ver Sección 3)
-├── Planes/             ← planes generados por la directiva `plan:` (Sección 0.2)
-├── backend/            ← FastAPI + SQLAlchemy (ver Stack, Sección 1)
-└── frontend/           ← React + TypeScript + Vite (ver Stack, Sección 1)
+├── CLAUDE.md                ← este archivo — contexto, stack, reglas de trabajo
+├── BITACORA.md              ← historial de sesiones (ver Sección 3)
+├── Planes/                  ← planes de la directiva `plan:` (Sección 0.2)
+├── Diseño MyTrueque.com P2P/ ← handoffs de diseño (Sección 4)
+│
+├── backend/
+│   ├── .env                 ← secretos, GITIGNORADO (Sección 2.1)
+│   ├── .env.example         ← plantilla versionada
+│   ├── alembic/versions/    ← 4 migraciones: users, google_id, orders, downloaded_at
+│   ├── data/
+│   │   ├── trueque.db       ← SQLite
+│   │   └── custodia/<id>/   ← archivos en custodia, GITIGNORADO
+│   ├── src/
+│   │   ├── core/            ← config, db, security (cookie firmada), storage
+│   │   ├── features/
+│   │   │   ├── auth/        ← correo+contraseña, Google OAuth, dependencias de sesión
+│   │   │   ├── orders/      ← custodia: crear, listar, autorizar, descargar, purgar
+│   │   │   └── admin/       ← panel de almacenamiento (una sola cuenta)
+│   │   └── main.py          ← app, CORS y el middleware de Content-Length
+│   └── tests/               ← test_auth, test_google_auth, test_orders, test_admin
+│
+└── frontend/
+    └── src/
+        ├── features/
+        │   ├── landing/     ← pública: Hero, HowItWorks, Inspection, Guarantees, Faq…
+        │   ├── auth/        ← AuthPanel, RutaPrivada, store de zustand, authService
+        │   ├── orders/      ← el panel privado entero (detalle en §2.2)
+        │   │   ├── components/  ← PanelShell, PanelHeader/Footer, MenuCuenta,
+        │   │   │                  GrillaArchivos, AccionesOrden, StateChip,
+        │   │   │                  FormularioNuevaOrden, ModalNuevaOrden, HashField…
+        │   │   ├── pages/       ← PanelPage, NuevaOrdenPage, DetalleOrdenPage
+        │   │   ├── context/     ← estado compartido del formulario de venta
+        │   │   ├── hooks/       ← useOrders, useCrearOrden, useAutorizarDescarga,
+        │   │   │                  usePurgarOrden (y usePurgarArchivo)
+        │   │   ├── services/    ← ordersService (XHR con progreso + fetch)
+        │   │   ├── data/        ← ordersFixtures, SOLO para `?demo=1`
+        │   │   └── types.ts     ← estados, roles y helpers del dominio
+        │   ├── admin/       ← AdminPage + hooks + adminService
+        │   └── legal/       ← privacidad y términos
+        ├── shared/          ← Button, TextField, Modal, Logo, hooks genéricos
+        ├── lib/api/         ← cliente openapi-fetch + `schema.d.ts` GENERADO
+        ├── styles/          ← _tokens.scss (marca) y _mixins.scss
+        └── test/            ← renderConWrappers
 ```
 
 - `backend/` y `frontend/` se desarrollan y corren de forma independiente
   (procesos separados, cada uno con su propio entorno/dependencias).
 - Los planes (`plan:`) se guardan en `Planes/` en la raíz — si el proyecto
   crece y conviene separarlos por área, se replantea entonces.
+- **`frontend/src/lib/api/schema.d.ts` no se edita a mano**: se regenera con
+  `pnpm exec openapi-typescript http://localhost:8000/openapi.json -o src/lib/api/schema.d.ts`
+  (con el backend levantado) cada vez que cambia un contrato del API.
 
 ### Cómo levantar cada parte
 
@@ -219,6 +260,8 @@ valores de ejemplo, para que cualquiera sepa qué necesita sin exponer nada.
 | `GOOGLE_CLIENT_ID` | OAuth de Google | Google Cloud Console (ver abajo) |
 | `GOOGLE_CLIENT_SECRET` | OAuth de Google | ídem — **solo se muestra una vez** |
 | `GOOGLE_REDIRECT_URI` | Callback de OAuth | dev: `http://localhost:8000/auth/google/callback` |
+| `FRONTEND_URL` | A dónde vuelve el callback de Google | dev: `http://localhost:5173` |
+| `ADMIN_EMAIL` | Única cuenta que ve `/panel/admin` | un correo ya registrado. **Vacío o ausente = nadie es admin**, que es lo correcto en desarrollo |
 
 ### Proyecto de Google Cloud (login con Google)
 
@@ -241,6 +284,105 @@ valores de ejemplo, para que cualquiera sepa qué necesita sin exponer nada.
 - **Si se pierde el Client Secret**: no se puede recuperar, se genera uno nuevo
   desde Google Auth Platform → Clientes → (el cliente) → Agregar secreto.
 - **Costo**: cero. Sign in with Google no se factura y no pide tarjeta.
+
+---
+
+## 2.2 Estado funcional — qué hace hoy la aplicación
+
+> Actualizado el 2026-09-22. Esta sección describe **lo que existe y funciona**,
+> no lo planeado. Si algo se implementa o se retira, se actualiza aquí.
+
+### Ciclo de vida de una orden, tal como está implementado
+
+`EN_CUSTODIA` → (el vendedor autoriza) → `LIBERADO` → (el comprador descarga:
+se marca `downloaded_at`) → `PURGADO` cuando alguien borra los archivos.
+
+`EN_INSPECCION` y `PAGO_ENVIADO` existen en los tipos pero **ninguna
+transición los produce todavía**: son maqueta.
+
+### Lo implementado
+
+| Área | Qué hace | Dónde vive |
+|---|---|---|
+| Registro y login | Correo+contraseña (bcrypt directo) y Google OAuth, con vinculación por correo verificado. Sesión en cookie firmada con `itsdangerous`, no JWT | `backend/src/features/auth/`, `frontend/src/features/auth/` |
+| Identidad | `@usuario` (`@trq-XXXX`) generado al registrarse. Es lo único que se comparte: no hay perfiles ni enlaces públicos | ídem |
+| Crear una venta | Subida real multi-archivo con progreso (XHR), hash SHA-256 por bloques, tope de **1 GB por orden** y comprobación de espacio libre antes de escribir | `orders/api.py`, `core/storage.py`, `FormularioNuevaOrden/` |
+| Panel | Siempre: resumen de cuenta + dos grillas — lo que vendes y lo que compras. Una tarjeta por orden con todos sus archivos (nombre, tipo, peso) | `orders/pages/PanelPage.tsx`, `GrillaArchivos/` |
+| Autorizar la descarga | Switch "Autorizo Descarga!" del vendedor. Revocable **solo hasta la primera descarga** (después el backend responde 409) | `PUT /orders/{id}/autorizacion`, `AccionesOrden/` |
+| Descargar | Botón "Descarga de files" del comprador, inactivo hasta la autorización. Los archivos bajan uno por uno con su nombre original, sin ZIP | `GET /orders/{id}/archivos/{fid}`, `AccionesOrden/` |
+| Borrar (vendedor) | Papelera por archivo y "Borrar todo" por orden, ambas con confirmación en dos tiempos. Borrar el último archivo deja la orden en `PURGADO` | `DELETE /orders/{id}` y `.../archivos/{fid}` |
+| Panel de almacenamiento | Solo la cuenta de `ADMIN_EMAIL`: disco, órdenes de todos, backup ZIP **en streaming**, borrado, y las dos incoherencias que nadie más ve (archivo sin bytes, carpeta sin orden) | `backend/src/features/admin/`, `frontend/src/features/admin/` |
+
+### Mapa de endpoints
+
+| Método y ruta | Quién |
+|---|---|
+| `POST /auth/register` · `POST /auth/login` · `POST /auth/logout` · `GET /auth/me` | público / con sesión |
+| `GET /auth/google` · `GET /auth/google/callback` | público |
+| `POST /orders` · `GET /orders` | con sesión |
+| `PUT /orders/{id}/autorizacion` | vendedor de esa orden |
+| `GET /orders/{id}/archivos/{fid}` | comprador, y solo si está `LIBERADO` |
+| `DELETE /orders/{id}` · `DELETE /orders/{id}/archivos/{fid}` | vendedor de esa orden |
+| `GET /admin/almacenamiento` · `GET /admin/ordenes/{id}/zip` · `GET /admin/ordenes/{id}/archivos/{fid}` | admin |
+| `DELETE /admin/ordenes/{id}` · `.../archivos/{fid}` · `DELETE /admin/huerfanos/{nombre}` | admin |
+| `GET /health` | público |
+
+🔴 **Todo lo de `/admin` responde 404 —no 403— a quien no es el administrador**:
+un 403 confirmaría que el panel existe y que solo falta ser alguien concreto.
+
+### Rutas del frontend
+
+`/` (landing) · `/privacidad` · `/terminos` · `/panel` · `/panel/nueva`
+(modal desde 768px, pantalla completa en teléfono) · `/panel/orden/:id` ·
+`/panel/admin`. Todo lo que cuelga de `/panel` va tras `RutaPrivada`.
+
+### Decisiones de producto ya tomadas (no reabrir sin motivo)
+
+- **El monto NO se pide.** El dinero nunca pasa por la plataforma, así que la
+  cifra no gobernaba ninguna decisión del sistema. La columna `amount_cop`
+  sigue existiendo y el API acepta `monto` opcional (0 por defecto) por las
+  órdenes viejas.
+- **No se arma un ZIP para el comprador**: cada archivo baja con su nombre
+  original, que es lo que se verifica contra el hash.
+- **Descargar no purga.** Se marca `downloaded_at` y los bytes siguen ahí,
+  para que una descarga cortada se pueda reintentar.
+- **Un control interactivo nunca va dentro de un `<a>`**: las tarjetas del
+  panel dejaron de ser enlaces completos por esto.
+
+### Pendiente (conocido, no olvidado)
+
+- **Purga automática a los 30 días**: `purge_at` se calcula y **nada la
+  ejecuta**. Hoy solo se libera disco a mano (vendedor o panel admin).
+- **Cifrado en reposo**: el copy de la UI lo promete; no está implementado.
+- `EN_INSPECCION`, `PAGO_ENVIADO` y la subida del comprobante de pago.
+- Componentes huérfanos sin montar en ninguna pantalla: `OrderCard/`,
+  `FiltroTurno/`, `BarraAccion/`.
+- La landing conserva objetivos táctiles de 38px (el panel ya está a 44+).
+
+### Producción — cómo está montado
+
+Dominio `mytrueque.shop` (Hostinger) apuntando a un **EC2 t3.micro en Ohio**
+(Ubuntu, 1 GB de RAM, 6,7 GB de disco con ~2,9 GB libres). El repositorio
+vive en `/home/ubuntu/trueque` y se actualiza con `git pull`.
+
+| Pieza | Cómo |
+|---|---|
+| Frontend | nginx sirve `frontend/dist` estático. Tras un `git pull`: `pnpm build` en `frontend/` |
+| Backend | Unidad systemd `trueque-backend` (`WorkingDirectory=/home/ubuntu/trueque/backend`). **Si cambia el backend hay que reiniciarla**: `sudo systemctl restart trueque-backend` |
+| Migraciones | No se aplican solas: `uv run alembic upgrade head` desde `backend/` |
+| nginx | `/etc/nginx/sites-available/trueque`, con TLS de Certbot |
+
+🔴 **Cada prefijo nuevo del API necesita su propio `location` en nginx.** No se
+hereda: lo que falte cae en el catch-all de la SPA y devuelve `index.html` con
+un 200, así que el fallo se ve como "el botón no hace nada" y no como un error.
+Hoy están `/auth/`, `/health`, `/orders` (con `client_max_body_size 1100m`, por
+el tope de 1 GB) y `/admin` (con `proxy_buffering off` y
+`proxy_max_temp_file_size 0`, sin los cuales nginx guardaría el backup ZIP
+entero en un temporal y anularía el streaming).
+
+Para comprobar que un despliegue llegó de verdad, comparar el hash del bundle:
+`curl -s https://mytrueque.shop/ | grep -o 'index-[A-Za-z0-9_-]*\.js'` contra
+el que imprimió `pnpm build`.
 
 ---
 
@@ -276,6 +418,26 @@ contexto estable, y la bitácora crece sin inflarlo.
 8. Al cerrar una tarea, agregar la fila en `BITACORA.md` **antes** de
    reportarle al usuario que terminaste — es parte de "terminar", no un paso
    aparte.
+
+### Resumen de la última sesión (2026-09-22)
+
+Índice rápido; **el detalle técnico de cada fila está en `BITACORA.md`**, que
+sigue siendo la fuente única. Esta tabla existe solo para retomar contexto de
+un vistazo.
+
+| Fecha | ID | Cambio | Archivos principales |
+|---|---|---|---|
+| 2026-09-22 | DESCARGA | El vendedor autoriza con un switch y el comprador descarga. Columna `downloaded_at` + migración `b2c3d4e5f6a7`. Revocar solo es posible hasta la primera descarga | `orders/{models,schemas,service,api}.py`, `AccionesOrden/`, `useAutorizarDescarga.ts` |
+| 2026-09-22 | PURGA | El vendedor borra los archivos de su orden. `DELETE /orders/{id}`. El comprador recibe 404: lo que tiene en custodia no es suyo | `orders/{service,api}.py`, `usePurgarOrden.ts` |
+| 2026-09-22 | OAUTH | El cliente de Google pasa de *Testing* a **Producción**: ya entra cualquier correo. Hicieron falta las páginas de privacidad y términos | `features/legal/`, Google Cloud Console |
+| 2026-09-22 | PURGA-1 | Borrado **por archivo**. Si era el último, la orden queda `PURGADO`. La tarjeta deja de ser un `<a>` para poder llevar botones | `orders/{service,api}.py`, `core/storage.py`, `GrillaArchivos/` |
+| 2026-09-22 | ADMIN | Panel de almacenamiento en `/panel/admin` para la cuenta de `ADMIN_EMAIL`: disco, backup ZIP en streaming, borrado y detección de incoherencias. 404 para todos los demás | `features/admin/` (back y front), `auth/dependencies.py`, `MenuCuenta/` |
+| 2026-09-22 | SIN-MONTO | El formulario de venta deja de pedir el monto; fuera también la tarjeta ACORDADO del detalle | `orders/{api,service}.py`, `FormularioNuevaOrden/`, `DetalleOrdenPage.tsx` |
+
+Además, sin fila propia por ser ajustes de interfaz dentro de esas mismas
+tareas (están en los commits): una sola tarjeta por orden lleve 1 archivo o
+mil, el control de descarga movido al encabezado de la tarjeta, `LIBERADO` en
+lima, y el panel dejando de anunciar "cuenta creada" en cada entrada.
 
 ---
 
