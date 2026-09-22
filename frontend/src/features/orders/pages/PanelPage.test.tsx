@@ -30,7 +30,7 @@ describe('PanelPage', () => {
     useOrdersMock.mockReturnValue({ orders: [], isLoading: false })
     renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
 
-    expect(screen.getByText(/Tu cuenta está lista/)).toBeInTheDocument()
+    expect(screen.getByText(/Comprar y vender archivos/)).toBeInTheDocument()
     expect(screen.getByTestId('mi-handle')).toHaveTextContent('@trq-925j')
   })
 
@@ -52,7 +52,7 @@ describe('PanelPage', () => {
     useOrdersMock.mockReturnValue({ orders: ORDENES_DE_EJEMPLO, isLoading: false })
     renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
 
-    expect(screen.getByText(/Tu cuenta está lista/)).toBeInTheDocument()
+    expect(screen.getByText(/Comprar y vender archivos/)).toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /Esperando/ })).not.toBeInTheDocument()
     expect(screen.queryByTestId('order-card-4821')).not.toBeInTheDocument()
   })

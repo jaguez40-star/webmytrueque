@@ -40,12 +40,12 @@ export function PanelPage() {
 function ResumenCuenta({ handle, location }: { handle: string; location: Location }) {
   return (
     <div className={styles.vacio}>
-      <span className={styles.vacioBadge}>
-        <span className={styles.vacioPunto} aria-hidden="true" />
-        CUENTA CREADA
-      </span>
-
-      <h1 className={styles.vacioTitulo}>Tu cuenta está lista. Este es tu @usuario.</h1>
+      {/* Ni "CUENTA CREADA" ni "tu cuenta está lista": esto se ve en CADA entrada al
+          panel, y anunciar un registro que pasó hace semanas es falso. El titular dice
+          qué es este sitio, que sigue siendo cierto la primera vez y la número cien. */}
+      <h1 className={styles.vacioTitulo}>
+        Comprar y vender archivos, con las dos partes protegidas.
+      </h1>
       {/* Las dos reglas del modelo van aquí arriba, no en tarjetas aparte: son el marco
           para leer todo lo demás, no dos opciones entre las que elegir. */}
       <p className={styles.vacioSubtitulo}>

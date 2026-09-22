@@ -13,33 +13,12 @@
   }
 }
 
-.vacioBadge {
-  @include mono-label(10.5px, 0.08em);
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--c-text-secondary);
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-pill);
-  padding: 6px 12px;
-}
-
-.vacioPunto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--c-signal);
-}
-
 .vacioTitulo {
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
   color: var(--c-ink);
-  margin-top: 16px;
 
   @include desde-md {
     font-size: 32px;
