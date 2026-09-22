@@ -1,88 +1,39 @@
-import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import type { Location } from 'react-router-dom'
-import { Check, Copy, Plus, Share2, Upload } from 'lucide-react'
+import { Check, Copy, Share2, Upload } from 'lucide-react'
 import { PanelShell } from '../components/PanelShell'
-import { BarraAccion } from '../components/BarraAccion'
-import { OrderCard } from '../components/OrderCard'
-import { FiltroTurno, type Turno } from '../components/FiltroTurno'
 import { GrillaArchivos } from '../components/GrillaArchivos'
 import { useOrders } from '../hooks/useOrders'
 import { useCompartirUsuario } from '../hooks/useCompartirUsuario'
-import { esMiTurno, estaCerrada } from '../types'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import styles from './PanelPage.module.scss'
 
+/**
+ * Pantalla principal del panel.
+ *
+ * Antes tenía dos layouts distintos: la bienvenida cuando `orders.length === 0`, y una
+ * bandeja con pestañas "Te toca"/"Esperando" en cuanto había alguna orden. Se eliminó la
+ * bandeja: ahora el panel SIEMPRE muestra el resumen de cuenta + "Tus archivos en
+ * custodia", tengas 0 órdenes o 20 — es una sola pantalla, no dos que alternan.
+ */
 export function PanelPage() {
   const user = useAuthStore((state) => state.user)
   const { orders } = useOrders()
-  const [turno, setTurno] = useState<Turno>('mio')
   // Se pasa como `state` al navegar a /panel/nueva: le dice a App sobre qué pantalla
   // superponer el modal en escritorio. En teléfono se ignora y la navegación es normal.
   const location = useLocation()
 
-  const abiertas = orders.filter((orden) => !estaCerrada(orden))
-  const misTurnos = abiertas.filter(esMiTurno)
-  const enEspera = abiertas.filter((orden) => !esMiTurno(orden))
-  const visibles = turno === 'mio' ? misTurnos : enEspera
-
-  // Sin órdenes no hay barra fija: la acción vive en la tarjeta "Si vas a vender", que
-  // es la única de las tres que hace algo. Tener además un botón fijo que dice lo mismo
-  // era repetir el mismo destino dos veces en una pantalla que cabe sin scroll.
-  if (orders.length === 0) {
-    return (
-      <PanelShell>
-        <EstadoVacio handle={user?.handle ?? ''} location={location} />
-        <GrillaArchivos ordenes={orders} />
-      </PanelShell>
-    )
-  }
-
   return (
-    <PanelShell
-      barra={
-        <BarraAccion>
-          <Link to="/panel/nueva" state={{ background: location }} className={styles.ctaBarra}>
-            <Plus size={18} aria-hidden="true" />
-            Nueva orden de venta
-          </Link>
-        </BarraAccion>
-      }
-    >
-      <h1 className={styles.titulo}>Tus órdenes</h1>
-      <p className={styles.subtitulo}>Aquí ves de quién es el turno.</p>
-
-      <div className={styles.filtro}>
-        <FiltroTurno
-          valor={turno}
-          onChange={setTurno}
-          totalMio={misTurnos.length}
-          totalAjeno={enEspera.length}
-        />
-      </div>
-
-      {visibles.length === 0 ? (
-        <p className={styles.sinOrdenes}>
-          {turno === 'mio'
-            ? 'Nada pendiente de tu lado. Todo está esperando a la otra parte.'
-            : 'No hay órdenes esperando a nadie más.'}
-        </p>
-      ) : (
-        <div className={styles.lista}>
-          {visibles.map((orden) => (
-            <OrderCard key={orden.id} orden={orden} />
-          ))}
-        </div>
-      )}
-
+    <PanelShell>
+      <ResumenCuenta handle={user?.handle ?? ''} location={location} />
       <GrillaArchivos ordenes={orders} />
     </PanelShell>
   )
 }
 
-/* ───────────────────────── Estado vacío ───────────────────────── */
+/* ───────────────────────── Resumen de cuenta ───────────────────────── */
 
-function EstadoVacio({ handle, location }: { handle: string; location: Location }) {
+function ResumenCuenta({ handle, location }: { handle: string; location: Location }) {
   return (
     <div className={styles.vacio}>
       <span className={styles.vacioBadge}>
@@ -123,14 +74,13 @@ function EstadoVacio({ handle, location }: { handle: string; location: Location 
           Dices a qué @usuario se lo vendes. Él ve la ficha técnica antes de pagarte.
         </span>
       </Link>
-
     </div>
   )
 }
 
 /**
  * Copiar y compartir el @usuario. Componente aparte porque necesita el estado del hook, y
- * el estado vacío es una función de render sin hooks propios.
+ * el resumen de cuenta es una función de render sin hooks propios.
  */
 function AccionesHandle({ handle }: { handle: string }) {
   const { copiar, compartir, copiado, puedeCompartir } = useCompartirUsuario(handle)

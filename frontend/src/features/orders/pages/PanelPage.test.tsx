@@ -1,12 +1,13 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { PanelPage } from './PanelPage'
 import { ORDENES_DE_EJEMPLO } from '../data/ordersFixtures'
 import { renderConWrappers, USUARIO_DE_PRUEBA } from '@/test/renderConWrappers'
 
-// `useOrders` decide con sessionStorage al cargar el módulo, así que en los tests se
-// sustituye el hook entero: es más honesto que manipular storage y recargar módulos.
+/**
+ * `useOrders` decide con sessionStorage al cargar el módulo, así que en los tests se
+ * sustituye el hook entero: es más honesto que manipular storage y recargar módulos.
+ */
 vi.mock('../hooks/useOrders', () => ({
   useOrders: vi.fn(),
   useOrder: vi.fn(),
@@ -19,8 +20,13 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
+/**
+ * El panel ya NO tiene una bandeja con pestañas ("Te toca"/"Esperando"): esa sección se
+ * eliminó. Ahora SIEMPRE muestra el resumen de cuenta + "Tus archivos en custodia",
+ * tengas 0 órdenes o varias — es una sola pantalla, no dos que alternan según el conteo.
+ */
 describe('PanelPage', () => {
-  it('sin órdenes muestra el estado vacío con el @usuario del usuario', () => {
+  it('sin órdenes muestra el resumen de cuenta con el @usuario del usuario', () => {
     useOrdersMock.mockReturnValue({ orders: [], isLoading: false })
     renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
 
@@ -28,7 +34,7 @@ describe('PanelPage', () => {
     expect(screen.getByTestId('mi-handle')).toHaveTextContent('@trq-925j')
   })
 
-  it('el estado vacío ofrece vender como única acción, sin barra fija duplicada', () => {
+  it('subir archivo es la única acción, sin barra fija duplicada', () => {
     useOrdersMock.mockReturnValue({ orders: [], isLoading: false })
     renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
 
@@ -42,28 +48,21 @@ describe('PanelPage', () => {
     expect(within(screen.getByRole('main')).getAllByRole('link')).toHaveLength(1)
   })
 
-  it('con órdenes arranca mostrando las que le tocan al usuario', () => {
+  it('con órdenes tampoco muestra pestañas ni tarjetas de orden: solo el resumen', () => {
     useOrdersMock.mockReturnValue({ orders: ORDENES_DE_EJEMPLO, isLoading: false })
     renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
 
-    // Las 3 de "te toca": 4821 (vendedor/PAGO_ENVIADO), 4812 (comprador/LIBERADO)
-    // y 4835 (comprador/EN_INSPECCION).
-    expect(screen.getByTestId('order-card-4821')).toBeInTheDocument()
-    expect(screen.getByTestId('order-card-4812')).toBeInTheDocument()
-    expect(screen.getByTestId('order-card-4835')).toBeInTheDocument()
-    // Las de espera NO están montadas todavía.
-    expect(screen.queryByTestId('order-card-4840')).not.toBeInTheDocument()
+    expect(screen.getByText(/Tu cuenta está lista/)).toBeInTheDocument()
+    expect(screen.queryByRole('tab', { name: /Esperando/ })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('order-card-4821')).not.toBeInTheDocument()
   })
 
-  it('el filtro cambia a las órdenes que esperan a la otra parte', async () => {
-    const user = userEvent.setup()
+  it('con órdenes de venta abiertas, la grilla las muestra', () => {
     useOrdersMock.mockReturnValue({ orders: ORDENES_DE_EJEMPLO, isLoading: false })
     renderConWrappers(<PanelPage />, { usuario: USUARIO_DE_PRUEBA, ruta: '/panel' })
 
-    await user.click(screen.getByRole('tab', { name: /Esperando/ }))
-
-    expect(screen.getByTestId('order-card-4840')).toBeInTheDocument()
-    expect(screen.getByTestId('order-card-4829')).toBeInTheDocument()
-    expect(screen.queryByTestId('order-card-4821')).not.toBeInTheDocument()
+    // 4821 y 4840 son ventas propias abiertas en los fixtures.
+    expect(screen.getByText('entrega-final-branding.zip')).toBeInTheDocument()
+    expect(screen.getByText('plantillas-notion-pack.zip')).toBeInTheDocument()
   })
 })
