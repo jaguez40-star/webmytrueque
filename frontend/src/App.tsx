@@ -8,6 +8,8 @@ import { ModalNuevaOrden } from '@/features/orders/components/ModalNuevaOrden'
 import { RutaPrivada } from '@/features/auth/components/RutaPrivada'
 import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser'
 import { useEsPantallaAncha } from '@/shared/hooks/useMediaQuery'
+import { PoliticaPrivacidadPage } from '@/features/legal/pages/PoliticaPrivacidadPage'
+import { TerminosPage } from '@/features/legal/pages/TerminosPage'
 
 /** Lo que PanelPage guarda en `state` al abrir la creación desde el panel. */
 interface EstadoConFondo {
@@ -37,6 +39,8 @@ export function App() {
     <>
       <Routes location={fondo ?? location}>
         <Route path="/" element={<MainPage />} />
+        <Route path="/privacidad" element={<PoliticaPrivacidadPage />} />
+        <Route path="/terminos" element={<TerminosPage />} />
         <Route
           path="/panel"
           element={

@@ -223,7 +223,7 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
           <label className={styles.checkboxRow}>
             <input type="checkbox" className={styles.checkbox} {...registerField('acceptedTerms')} />
             <span>
-              Acepto los <a href="#preguntas">términos</a> y las{' '}
+              Acepto los <a href="/terminos" target="_blank" rel="noreferrer">términos</a> y las{' '}
               <a href="#garantias">reglas de custodia</a>.
             </span>
           </label>

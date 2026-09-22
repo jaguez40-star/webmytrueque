@@ -1,0 +1,100 @@
+@use '@/styles/mixins' as *;
+
+.page {
+  min-height: 100vh;
+  background: var(--c-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px var(--content-pad-mobile);
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-surface);
+
+  @include desde-md {
+    padding: 20px var(--content-pad);
+  }
+}
+
+.back {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-text-secondary);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--c-accent);
+  }
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px var(--content-pad-mobile) 80px;
+
+  @include desde-md {
+    padding: 64px var(--content-pad) 96px;
+  }
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--c-ink);
+  margin: 0 0 8px;
+}
+
+.updated {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  margin: 0 0 40px;
+}
+
+.content {
+  color: var(--c-text-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+
+  h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--c-ink);
+    margin: 36px 0 12px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin: 0 0 14px;
+  }
+
+  ul {
+    margin: 0 0 14px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin: 0 0 8px;
+  }
+
+  strong {
+    color: var(--c-ink);
+  }
+
+  a {
+    color: var(--c-accent-text);
+  }
+}

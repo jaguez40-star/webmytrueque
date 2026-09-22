@@ -7,6 +7,10 @@ export function Footer() {
       <div className={styles.bar}>
         <Logo variant="footer" />
         <span className={styles.legal}>© 2026 · CUSTODIA CIFRADA · PURGA AL DESCARGAR</span>
+        <nav className={styles.links}>
+          <a href="/privacidad">Privacidad</a>
+          <a href="/terminos">Términos</a>
+        </nav>
       </div>
     </footer>
   )
