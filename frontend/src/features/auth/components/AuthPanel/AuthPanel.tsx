@@ -65,10 +65,14 @@ export function AuthPanel({ tab, onTabChange }: AuthPanelProps) {
   )
 }
 
+const GOOGLE_AUTH_URL = import.meta.env.PROD
+  ? '/auth/google'
+  : 'http://localhost:8000/auth/google'
+
 /** Manda al backend, que a su vez redirige a la pantalla de consentimiento de Google. */
 function GoogleButton() {
   return (
-    <a className={styles.googleButton} href="http://localhost:8000/auth/google">
+    <a className={styles.googleButton} href={GOOGLE_AUTH_URL}>
       <svg className={styles.googleIcon} viewBox="0 0 18 18" aria-hidden="true">
         <path
           fill="#4285F4"
