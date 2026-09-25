@@ -361,6 +361,33 @@ un 403 confirmaría que el panel existe y que solo falta ser alguien concreto.
 
 ### Producción — cómo está montado
 
+> 🔴 **ESTADO: DETENIDA desde el 2026-09-25.** `trueque-backend` y `nginx`
+> están parados **y deshabilitados** (`systemctl disable`): no vuelven solos
+> ni aunque se reinicie la máquina. El dominio no responde. Se bajó a pedido
+> del usuario para revisar temas de imagen antes de reabrir.
+>
+> **Para volver a levantarla**: `sudo systemctl enable --now nginx trueque-backend`
+>
+> La **instancia EC2 se apaga desde la consola de AWS** (lo hace el usuario),
+> así que durante la pausa no hay nada corriendo ni facturando cómputo. Al
+> volver a encenderla, `enable --now` ya no hace falta si se dejó habilitado;
+> como aquí se **deshabilitó**, hay que levantarlo a mano con el comando de
+> arriba.
+>
+> Dos cosas a tener presentes al reabrir:
+> - **La IP pública cambia al apagar y encender**, salvo que la Elastic IP
+>   siga asociada. Si el dominio deja de resolver al servidor, es esto: hay
+>   que revisar la IP en Hostinger. (El despliegue original ya usaba Elastic
+>   IP; conviene confirmarlo antes de dar por rota la DNS.)
+> - El **certificado vence el 2026-12-21**. Certbot lo renueva solo, pero
+>   necesita nginx levantado y el puerto 80 accesible: una pausa larga obliga
+>   a renovarlo a mano al volver (`sudo certbot renew`).
+>
+> **Respaldo previo a la pausa**: `/home/ubuntu/respaldo-20260925-153247.tar.gz`
+> (38 MB: la SQLite + los archivos en custodia). Vive **solo dentro del EC2** —
+> no está versionado ni copiado fuera, así que sobrevive a apagar la instancia
+> pero no a destruirla.
+
 Dominio `mytrueque.shop` (Hostinger) apuntando a un **EC2 t3.micro en Ohio**
 (Ubuntu, 1 GB de RAM, 6,7 GB de disco con ~2,9 GB libres). El repositorio
 vive en `/home/ubuntu/trueque` y se actualiza con `git pull`.
@@ -419,7 +446,19 @@ contexto estable, y la bitácora crece sin inflarlo.
    reportarle al usuario que terminaste — es parte de "terminar", no un paso
    aparte.
 
-### Resumen de la última sesión (2026-09-22)
+### Resumen de la sesión del 2026-09-25
+
+| Fecha | ID | Cambio | Archivos principales |
+|---|---|---|---|
+| 2026-09-25 | PAUSA | **El servicio se detiene** (`stop` + `disable` de `trueque-backend` y `nginx`) y el usuario apaga la instancia en AWS, para revisar temas de imagen antes de reabrir. Respaldo previo de la BD y la custodia dentro del EC2. Sin cambios de código | ninguno; estado documentado en §2.2 |
+
+Estado verificado justo antes de la pausa: 5 usuarios, 4 órdenes, 13 archivos
+(44,6 MB) y **el ciclo completo cumplido por gente ajena al equipo**. El
+tráfico web engaña — de 560 IPs pidiendo `/`, la mayoría son escáneres
+buscando `/wp-admin` y `/.env`; el número honesto es quién carga el bundle JS:
+113 IPs únicas, sin un solo login desde el 23/09.
+
+### Resumen de la sesión del 2026-09-22
 
 Índice rápido; **el detalle técnico de cada fila está en `BITACORA.md`**, que
 sigue siendo la fuente única. Esta tabla existe solo para retomar contexto de
